@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   exitBtn: {
-    marginTop: 32,
+    marginTop: 1,
     marginBottom: 8,
     paddingVertical: 14,
     paddingHorizontal: 20,

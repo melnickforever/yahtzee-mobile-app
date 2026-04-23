@@ -193,8 +193,10 @@ const styles = StyleSheet.create({
   },
   col2: {
     width: 220,
+    paddingRight: 5,
   },
   col3: {
     width: 100,
+    paddingLeft: 5,
   },
 });
