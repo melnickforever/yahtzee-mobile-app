@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { StyleSheet, View, Text, Pressable, BackHandler } from 'react-native';
-import Svg, { Rect, Circle, G } from 'react-native-svg';
+import Svg, { Rect, Circle } from 'react-native-svg';
 import { Language, translations } from '../i18n';
 
 interface Props {
@@ -8,11 +8,13 @@ interface Props {
   onExit: () => void;
 }
 
-const DICE_SIZE = 52;
-const GAP = 10;
-const PADDING = 4;
-const CORNER_RADIUS = 7;
+const DICE_SIZE = 46;
+const GAP = 8;
+const PADDING = 2;
+const CORNER_RADIUS = 6;
 const MAX_ROLLS = 3;
+const SVG_SIZE = DICE_SIZE + PADDING * 2;
+const PIP_R = DICE_SIZE * 0.08;
 
 const pipPositions: Record<number, [number, number][]> = {
   1: [[0.5, 0.5]],
@@ -27,27 +29,35 @@ function randomFace(): number {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-function renderDie(
-  face: number,
-  x: number,
-  y: number,
-  body: string,
-  border: string,
-  pip: string,
-  onPress?: () => void,
-) {
-  const pipR = DICE_SIZE * 0.08;
+interface DieProps {
+  face: number;
+  body: string;
+  border: string;
+  pip: string;
+  onPress: () => void;
+}
+
+function Die({ face, body, border, pip, onPress }: DieProps) {
   return (
-    <G key={`${x}-${y}`} onPress={onPress}>
-      <Rect
-        x={x} y={y} width={DICE_SIZE} height={DICE_SIZE}
-        rx={CORNER_RADIUS} ry={CORNER_RADIUS}
-        fill={body} stroke={border} strokeWidth={1.5}
-      />
-      {pipPositions[face].map(([px, py], j) => (
-        <Circle key={j} cx={x + px * DICE_SIZE} cy={y + py * DICE_SIZE} r={pipR} fill={pip} />
-      ))}
-    </G>
+    <Pressable onPress={onPress} hitSlop={4}>
+      <Svg width={SVG_SIZE} height={SVG_SIZE}>
+        <Rect
+          x={PADDING} y={PADDING}
+          width={DICE_SIZE} height={DICE_SIZE}
+          rx={CORNER_RADIUS} ry={CORNER_RADIUS}
+          fill={body} stroke={border} strokeWidth={1.5}
+        />
+        {pipPositions[face].map(([px, py], j) => (
+          <Circle
+            key={j}
+            cx={PADDING + px * DICE_SIZE}
+            cy={PADDING + py * DICE_SIZE}
+            r={PIP_R}
+            fill={pip}
+          />
+        ))}
+      </Svg>
+    </Pressable>
   );
 }
 
@@ -118,9 +128,6 @@ export function DiceGame({ language, onExit }: Props) {
   const keptDice = gameDice.map((v, i) => ({ value: v, index: i })).filter((_, i) => kept[i]);
   const canRoll = rollCount < MAX_ROLLS && !rolling && freeDice.length > 0;
 
-  const svgW = (count: number) => Math.max(count, 1) * (DICE_SIZE + GAP) - GAP + PADDING * 2;
-  const svgH = DICE_SIZE + PADDING * 2;
-
   const rollBtnLabel = rolling || canRoll
     ? t.game.roll
     : freeDice.length === 0
@@ -164,11 +171,18 @@ export function DiceGame({ language, onExit }: Props) {
 
       <View style={[styles.diceArea, styles.diceAreaFree]}>
         {freeDice.length > 0 ? (
-          <Svg width={svgW(freeDice.length)} height={svgH}>
-            {freeDice.map((d, i) =>
-              renderDie(d.value, PADDING + i * (DICE_SIZE + GAP), PADDING, '#faf3e0', '#8b4513', '#5a2d0c', () => toggleKeep(d.index))
-            )}
-          </Svg>
+          <View style={styles.diceRow}>
+            {freeDice.map((d) => (
+              <Die
+                key={d.index}
+                face={d.value}
+                body="#faf3e0"
+                border="#8b4513"
+                pip="#5a2d0c"
+                onPress={() => toggleKeep(d.index)}
+              />
+            ))}
+          </View>
         ) : (
           <Text style={styles.emptyText}>{t.game.allKept}</Text>
         )}
@@ -177,11 +191,18 @@ export function DiceGame({ language, onExit }: Props) {
       <View style={[styles.diceArea, styles.diceAreaKept]}>
         <Text style={styles.keptLabel}>{t.game.kept}</Text>
         {keptDice.length > 0 ? (
-          <Svg width={svgW(keptDice.length)} height={svgH}>
-            {keptDice.map((d, i) =>
-              renderDie(d.value, PADDING + i * (DICE_SIZE + GAP), PADDING, '#e8dcc6', '#6b3410', '#5a2d0c', () => toggleKeep(d.index))
-            )}
-          </Svg>
+          <View style={styles.diceRow}>
+            {keptDice.map((d) => (
+              <Die
+                key={d.index}
+                face={d.value}
+                body="#e8dcc6"
+                border="#6b3410"
+                pip="#5a2d0c"
+                onPress={() => toggleKeep(d.index)}
+              />
+            ))}
+          </View>
         ) : (
           <Text style={styles.emptyText}>{t.game.empty}</Text>
         )}
@@ -235,6 +256,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   btnRoll: {
     backgroundColor: '#2d6b3f',
@@ -269,6 +291,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#fdf6e3',
+    textAlign: 'center',
   },
   btnTextDisabled: {
     color: '#fdf6e3',
@@ -277,6 +300,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: '#8b4513',
+    textAlign: 'center',
   },
   diceArea: {
     borderRadius: 10,
@@ -297,6 +321,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0e8d4',
     borderWidth: 2,
     borderColor: '#c4b590',
+  },
+  diceRow: {
+    flexDirection: 'row',
+    gap: GAP,
+    justifyContent: 'center',
   },
   keptLabel: {
     fontSize: 12,
