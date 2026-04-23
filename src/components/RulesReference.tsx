@@ -189,12 +189,12 @@ const styles = StyleSheet.create({
     color: '#5c4a2e',
   },
   col1: {
-    flex: 1,
+    width: 120,
   },
   col2: {
-    flex: 2,
+    width: 220,
   },
   col3: {
-    flex: 1,
+    width: 100,
   },
 });

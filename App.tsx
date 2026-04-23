@@ -6,9 +6,12 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   StatusBar,
+  Alert,
+  BackHandler,
+  Pressable,
 } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Language, translations } from './src/i18n';
 import { CategoryKey, ScoresData } from './src/types';
 import { loadGameState, saveGameState } from './src/storage';
@@ -23,6 +26,11 @@ const defaultScores: ScoresData = {
   ones: null, twos: null, threes: null, fours: null, fives: null, sixes: null,
   threeOfAKind: null, fourOfAKind: null, fullHouse: null,
   smallStraight: null, largeStraight: null, yahtzee: null, chance: null,
+};
+
+const EXIT_STRINGS = {
+  uk: { title: 'Вийти', message: 'Ви впевнені, що хочете вийти з гри?', yes: 'Так', no: 'Ні', button: 'Вийти з додатку' },
+  en: { title: 'Exit', message: 'Are you sure you want to exit the app?', yes: 'Yes', no: 'No', button: 'Exit App' },
 };
 
 export default function App() {
@@ -87,57 +95,86 @@ export default function App() {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   }, []);
 
+  const handleExitApp = useCallback(() => {
+    const s = EXIT_STRINGS[language];
+    Alert.alert(s.title, s.message, [
+      { text: s.no, style: 'cancel' },
+      { text: s.yes, style: 'destructive', onPress: () => BackHandler.exitApp() },
+    ]);
+  }, [language]);
+
+  // Loading screen — shown while AsyncStorage hydrates
+  if (!isLoaded) {
+    return (
+      <SafeAreaProvider>
+        <View style={styles.loadingScreen}>
+          <StatusBar barStyle="dark-content" backgroundColor="#f4efe6" />
+          <DiceLogo language="uk" onEnterGame={() => {}} gameActive={true} />
+          <Text style={styles.loadingTitle}>Yahtzee</Text>
+        </View>
+      </SafeAreaProvider>
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f4efe6" />
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
-        <ScrollView
-          ref={scrollRef}
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar barStyle="dark-content" backgroundColor="#f4efe6" />
+        <KeyboardAvoidingView
           style={styles.flex}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <View style={styles.mainContainer}>
-            <DiceLogo language={language} onEnterGame={handleEnterGame} gameActive={gameActive} />
-            <Text style={styles.title}>{t.title}</Text>
+          <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
+          <ScrollView
+            ref={scrollRef}
+            style={styles.flex}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
 
-            <PlayerNameSection
-              language={language}
-              playerName={playerName}
-              isPlayerNameSaved={isPlayerNameSaved}
-              onNameChange={setPlayerName}
-              onSave={() => { if (playerName.trim()) setIsPlayerNameSaved(true); }}
-              onEdit={() => setIsPlayerNameSaved(false)}
-            />
+            <View style={styles.mainContainer}>
+              <DiceLogo language={language} onEnterGame={handleEnterGame} gameActive={gameActive} />
+              <Text style={styles.title}>{t.title}</Text>
 
-            {gameActive && (
-              <View
-                onLayout={(e) => { diceGameY.current = e.nativeEvent.layout.y; }}
+              <PlayerNameSection
+                language={language}
+                playerName={playerName}
+                isPlayerNameSaved={isPlayerNameSaved}
+                onNameChange={setPlayerName}
+                onSave={() => { if (playerName.trim()) setIsPlayerNameSaved(true); }}
+                onEdit={() => setIsPlayerNameSaved(false)}
+              />
+
+              {gameActive && (
+                <View onLayout={(e) => { diceGameY.current = e.nativeEvent.layout.y; }}>
+                  <DiceGame language={language} onExit={handleExitGame} />
+                </View>
+              )}
+
+              <RulesReference language={language} />
+
+              <ScoreTable
+                language={language}
+                scores={scores}
+                onScoreChange={handleScoreChange}
+                yahtzeeBonus={yahtzeeBonus}
+                onYahtzeeBonusChange={setYahtzeeBonus}
+                onClearScores={handleClearScores}
+                onLoadGame={handleLoadGame}
+                playerName={playerName}
+              />
+
+              <Pressable
+                onPress={handleExitApp}
+                style={({ pressed }) => [styles.exitBtn, pressed && styles.exitBtnPressed]}
               >
-                <DiceGame language={language} onExit={handleExitGame} />
-              </View>
-            )}
-
-            <RulesReference language={language} />
-
-            <ScoreTable
-              language={language}
-              scores={scores}
-              onScoreChange={handleScoreChange}
-              yahtzeeBonus={yahtzeeBonus}
-              onYahtzeeBonusChange={setYahtzeeBonus}
-              onClearScores={handleClearScores}
-              onLoadGame={handleLoadGame}
-              playerName={playerName}
-            />
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+                <Text style={styles.exitBtnText}>{EXIT_STRINGS[language].button}</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
@@ -149,8 +186,20 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
+  loadingScreen: {
+    flex: 1,
+    backgroundColor: '#f4efe6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingTitle: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#2c1810',
+    marginTop: 12,
+  },
   scrollContent: {
-    paddingTop: 48,
+    paddingTop: 16,
     paddingBottom: 32,
   },
   mainContainer: {
@@ -166,5 +215,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     marginTop: 8,
+  },
+  exitBtn: {
+    marginTop: 32,
+    marginBottom: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#8b4513',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+  exitBtnPressed: {
+    backgroundColor: '#f0e8d4',
+  },
+  exitBtnText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#8b4513',
   },
 });

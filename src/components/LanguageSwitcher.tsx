@@ -34,12 +34,11 @@ export function LanguageSwitcher({ currentLanguage, onLanguageChange }: Props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    zIndex: 10,
     flexDirection: 'row',
+    justifyContent: 'flex-end',
     gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   pill: {
     borderRadius: 6,
