@@ -35,6 +35,13 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
   const bounceAnim = useRef(new Animated.Value(0)).current;
   const hintOpacity = useRef(new Animated.Value(1)).current;
   const hintArrow = useRef(new Animated.Value(0)).current;
+  const pressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (pressIntervalRef.current !== null) clearInterval(pressIntervalRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     if (!gameActive) setHasRolled(false);
@@ -79,11 +86,12 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
     setRolling(true);
     setHasRolled(true);
     let count = 0;
-    const interval = setInterval(() => {
+    pressIntervalRef.current = setInterval(() => {
       setFaces(Array.from({ length: 5 }, randomFace));
       count++;
       if (count >= 8) {
-        clearInterval(interval);
+        clearInterval(pressIntervalRef.current!);
+        pressIntervalRef.current = null;
         setRolling(false);
         onEnterGame();
       }

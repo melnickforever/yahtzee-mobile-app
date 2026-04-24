@@ -26,6 +26,12 @@ export function ScoreTable({
   const [fileError, setFileError] = useState<string | null>(null);
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useEffect(() => {
+    return () => {
+      if (errorTimerRef.current !== null) clearTimeout(errorTimerRef.current);
+    };
+  }, []);
+
   const isYahtzeeBonusLocked = scores.yahtzee === 0;
 
   useEffect(() => {

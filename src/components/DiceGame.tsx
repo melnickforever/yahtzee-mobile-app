@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Pressable, BackHandler } from 'react-native';
 import Svg, { Rect, Circle } from 'react-native-svg';
 import { Language, translations } from '../i18n';
@@ -69,6 +69,14 @@ export function DiceGame({ language, onExit }: Props) {
   const [rollCount, setRollCount] = useState(1);
   const [rolling, setRolling] = useState(false);
 
+  const rollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (rollIntervalRef.current !== null) clearInterval(rollIntervalRef.current);
+    };
+  }, []);
+
   useEffect(() => {
     let count = 0;
     const interval = setInterval(() => {
@@ -94,11 +102,12 @@ export function DiceGame({ language, onExit }: Props) {
     setRollCount((c) => c + 1);
     let count = 0;
     const keptSnapshot = [...kept];
-    const interval = setInterval(() => {
+    rollIntervalRef.current = setInterval(() => {
       setGameDice((prev) => prev.map((val, i) => (keptSnapshot[i] ? val : randomFace())));
       count++;
       if (count >= 8) {
-        clearInterval(interval);
+        clearInterval(rollIntervalRef.current!);
+        rollIntervalRef.current = null;
         setRolling(false);
       }
     }, 80);
@@ -110,15 +119,17 @@ export function DiceGame({ language, onExit }: Props) {
   }, [rolling]);
 
   const handleNewTurn = useCallback(() => {
+    if (rollIntervalRef.current !== null) clearInterval(rollIntervalRef.current);
     setKept([false, false, false, false, false]);
     setRollCount(1);
     setRolling(true);
     let count = 0;
-    const interval = setInterval(() => {
+    rollIntervalRef.current = setInterval(() => {
       setGameDice(Array.from({ length: 5 }, randomFace));
       count++;
       if (count >= 8) {
-        clearInterval(interval);
+        clearInterval(rollIntervalRef.current!);
+        rollIntervalRef.current = null;
         setRolling(false);
       }
     }, 80);
