@@ -19,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#8b4513"
+        "backgroundColor": "#f4efe6"
       },
       "package": "com.melnickforever.yahtzee",
       "edgeToEdgeEnabled": true,
@@ -27,6 +27,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9ccabc4d-6c51-49f3-bdf9-813dce3f2054"
+      }
     }
   }
 }
