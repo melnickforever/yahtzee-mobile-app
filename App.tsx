@@ -7,9 +7,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
-  Alert,
-  BackHandler,
-  Pressable,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Language, translations } from './src/i18n';
@@ -28,10 +25,6 @@ const defaultScores: ScoresData = {
   smallStraight: null, largeStraight: null, yahtzee: null, chance: null,
 };
 
-const EXIT_STRINGS = {
-  uk: { title: 'Вийти', message: 'Ви впевнені, що хочете вийти з гри?', yes: 'Так', no: 'Ні', button: 'Вийти з додатку' },
-  en: { title: 'Exit', message: 'Are you sure you want to exit the app?', yes: 'Yes', no: 'No', button: 'Exit App' },
-};
 
 export default function App() {
   const [language, setLanguage] = useState<Language>('uk');
@@ -95,14 +88,6 @@ export default function App() {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   }, []);
 
-  const handleExitApp = useCallback(() => {
-    const s = EXIT_STRINGS[language];
-    Alert.alert(s.title, s.message, [
-      { text: s.no, style: 'cancel' },
-      { text: s.yes, style: 'destructive', onPress: () => BackHandler.exitApp() },
-    ]);
-  }, [language]);
-
   // Loading screen — shown while AsyncStorage hydrates
   if (!isLoaded) {
     return (
@@ -164,12 +149,6 @@ export default function App() {
                 playerName={playerName}
               />
 
-              <Pressable
-                onPress={handleExitApp}
-                style={({ pressed }) => [styles.exitBtn, pressed && styles.exitBtnPressed]}
-              >
-                <Text style={styles.exitBtnText}>{EXIT_STRINGS[language].button}</Text>
-              </Pressable>
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -215,24 +194,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     marginTop: 8,
-  },
-  exitBtn: {
-    marginTop: 1,
-    marginBottom: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#8b4513',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
-  },
-  exitBtnPressed: {
-    backgroundColor: '#f0e8d4',
-  },
-  exitBtnText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#8b4513',
   },
 });
