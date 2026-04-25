@@ -202,7 +202,7 @@ const scoreColWidth = 100;
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 24,
+    marginBottom: 0,
   },
   tableHeader: {
     flexDirection: 'row',
@@ -214,7 +214,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#2c1810',
-    flex: 1,
   },
   broomBtn: {
     borderRadius: 6,
