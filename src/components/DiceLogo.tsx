@@ -12,7 +12,7 @@ interface Props {
 
 const DICE_SIZE = 36;
 const GAP = 6;
-const PADDING = 6;
+const PADDING = 4;
 const CORNER_RADIUS = 5;
 
 const pipPositions: Record<number, [number, number][]> = {
@@ -108,48 +108,40 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.outerFrame}>
-        <Pressable onPress={handlePress} disabled={gameActive} style={styles.innerFrame}>
-          <View style={styles.titleBanner}>
-            <Text style={styles.star}>★</Text>
-            <Text style={[
-              styles.titleText,
-              fontsLoaded ? { fontFamily: 'Lexend_800ExtraBold' } : { fontWeight: '900' },
-            ]}>
-              {translations[language].title.toUpperCase()}
-            </Text>
-            <Text style={styles.star}>★</Text>
-          </View>
+      <Pressable onPress={handlePress} disabled={gameActive}>
+        <Animated.View style={styles.topTitleHint}>
+          <Text style={[
+            styles.topTitleText,
+            fontsLoaded ? { fontFamily: 'Lexend_800ExtraBold' } : { fontWeight: '900' },
+          ]}>
+            {translations[language].title}
+          </Text>
+        </Animated.View>
 
-          <View style={styles.bannerEdge} />
-
-          <View style={styles.diceArea}>
-            <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
-              <Svg width={svgWidth} height={svgHeight}>
-                {faces.map((face, i) => {
-                  const x = PADDING + i * (DICE_SIZE + GAP);
-                  const y = PADDING;
-                  const rotation = (i - 2) * 4;
-                  const cx = x + DICE_SIZE / 2;
-                  const cy = y + DICE_SIZE / 2;
-                  return (
-                    <G key={i} rotation={rotation} origin={`${cx}, ${cy}`}>
-                      <Rect
-                        x={x} y={y} width={DICE_SIZE} height={DICE_SIZE}
-                        rx={CORNER_RADIUS} ry={CORNER_RADIUS}
-                        fill="#faf3e0" stroke="#8b4513" strokeWidth={1.5}
-                      />
-                      {pipPositions[face].map(([px, py], j) => (
-                        <Circle key={j} cx={x + px * DICE_SIZE} cy={y + py * DICE_SIZE} r={pipRadius} fill="#5a2d0c" />
-                      ))}
-                    </G>
-                  );
-                })}
-              </Svg>
-            </Animated.View>
-          </View>
-        </Pressable>
-      </View>
+        <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
+          <Svg width={svgWidth} height={svgHeight}>
+            {faces.map((face, i) => {
+              const x = PADDING + i * (DICE_SIZE + GAP);
+              const y = PADDING;
+              const rotation = (i - 2) * 4;
+              const cx = x + DICE_SIZE / 2;
+              const cy = y + DICE_SIZE / 2;
+              return (
+                <G key={i} rotation={rotation} origin={`${cx}, ${cy}`}>
+                  <Rect
+                    x={x} y={y} width={DICE_SIZE} height={DICE_SIZE}
+                    rx={CORNER_RADIUS} ry={CORNER_RADIUS}
+                    fill="#faf3e0" stroke="#8b4513" strokeWidth={1.5}
+                  />
+                  {pipPositions[face].map(([px, py], j) => (
+                    <Circle key={j} cx={x + px * DICE_SIZE} cy={y + py * DICE_SIZE} r={pipRadius} fill="#5a2d0c" />
+                  ))}
+                </G>
+              );
+            })}
+          </Svg>
+        </Animated.View>
+      </Pressable>
 
       {!hasRolled && !gameActive && (
         <Animated.View style={[styles.hint, { opacity: hintOpacity }]}>
@@ -172,63 +164,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  outerFrame: {
-    backgroundColor: '#7a3810',
-    borderRadius: 14,
-    padding: 3,
-    shadowColor: '#2c1008',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 7,
-  },
-  innerFrame: {
-    backgroundColor: '#faf3e0',
-    borderRadius: 11,
-    overflow: 'hidden',
-    alignItems: 'center',
-  },
-  titleBanner: {
-    // backgroundColor: '#2a0d00',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'stretch',
-    paddingVertical: 9,
-    paddingHorizontal: 22,
-    gap: 10,
-  },
-  star: {
-    fontSize: 16,
-    color: '#7a3810',
-  },
-  titleText: {
-    fontSize: 30,
-    // color: '#f0c84a',
-    color: '#7a3810',
-    letterSpacing: 5,
-  },
-  bannerEdge: {
-    height: 3,
-    alignSelf: 'stretch',
-    backgroundColor: '#7a3810',
-  },
-  diceArea: {
-    paddingVertical: 14,
-    paddingHorizontal: 10,
-    alignItems: 'center',
-  },
   hint: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 6,
+    marginTop: 4,
+  },
+  topTitleHint: {
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
   },
   hintArrow: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#8b4513',
   },
   hintText: {
-    fontSize: 13,
+    fontSize: 15,
+    color: '#8b4513',
+    opacity: 0.7,
+  },
+  topTitleText: {
+    fontSize: 30,
     color: '#8b4513',
     opacity: 0.7,
   },
