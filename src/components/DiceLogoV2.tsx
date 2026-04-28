@@ -28,7 +28,9 @@ function randomFace(): number {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
+const DOTS = Array.from({ length: 13 });
+
+export function DiceLogoV2({ language, onEnterGame, gameActive }: Props) {
   const [faces, setFaces] = useState([1, 2, 3, 4, 5]);
   const [rolling, setRolling] = useState(false);
   const [hasRolled, setHasRolled] = useState(false);
@@ -108,48 +110,68 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.outerFrame}>
-        <Pressable onPress={handlePress} disabled={gameActive} style={styles.innerFrame}>
-          <View style={styles.titleBanner}>
-            <Text style={styles.star}>★</Text>
-            <Text style={[
-              styles.titleText,
-              fontsLoaded ? { fontFamily: 'Lexend_800ExtraBold' } : { fontWeight: '900' },
-            ]}>
-              {translations[language].title.toUpperCase()}
-            </Text>
-            <Text style={styles.star}>★</Text>
-          </View>
+      <Pressable onPress={handlePress} disabled={gameActive} style={styles.pressable}>
 
-          <View style={styles.bannerEdge} />
+        {/* Top dot border */}
+        <View style={styles.dotRow}>
+          {DOTS.map((_, i) => <View key={i} style={styles.dot} />)}
+        </View>
 
-          <View style={styles.diceArea}>
-            <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
-              <Svg width={svgWidth} height={svgHeight}>
-                {faces.map((face, i) => {
-                  const x = PADDING + i * (DICE_SIZE + GAP);
-                  const y = PADDING;
-                  const rotation = (i - 2) * 4;
-                  const cx = x + DICE_SIZE / 2;
-                  const cy = y + DICE_SIZE / 2;
-                  return (
-                    <G key={i} rotation={rotation} origin={`${cx}, ${cy}`}>
-                      <Rect
-                        x={x} y={y} width={DICE_SIZE} height={DICE_SIZE}
-                        rx={CORNER_RADIUS} ry={CORNER_RADIUS}
-                        fill="#faf3e0" stroke="#8b4513" strokeWidth={1.5}
-                      />
-                      {pipPositions[face].map(([px, py], j) => (
-                        <Circle key={j} cx={x + px * DICE_SIZE} cy={y + py * DICE_SIZE} r={pipRadius} fill="#5a2d0c" />
-                      ))}
-                    </G>
-                  );
-                })}
-              </Svg>
-            </Animated.View>
-          </View>
-        </Pressable>
-      </View>
+        {/* Upper ornamental rule */}
+        <View style={styles.ruleRow}>
+          <Text style={styles.ruleStar}>★</Text>
+          <View style={styles.ruleLine} />
+          <Text style={styles.ruleStar}>★</Text>
+        </View>
+
+        {/* Title */}
+        <Text style={[
+          styles.titleText,
+          fontsLoaded ? { fontFamily: 'Lexend_800ExtraBold' } : { fontWeight: '900' },
+        ]}>
+          {translations[language].title.toUpperCase()}
+        </Text>
+
+        {/* Lower ornamental rule */}
+        <View style={styles.ruleRow}>
+          <Text style={styles.ruleStar}>★</Text>
+          <View style={styles.ruleLine} />
+          <Text style={styles.ruleStar}>★</Text>
+        </View>
+
+        {/* Dice */}
+        <View style={styles.diceArea}>
+          <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
+            <Svg width={svgWidth} height={svgHeight}>
+              {faces.map((face, i) => {
+                const x = PADDING + i * (DICE_SIZE + GAP);
+                const y = PADDING;
+                const rotation = (i - 2) * 4;
+                const cx = x + DICE_SIZE / 2;
+                const cy = y + DICE_SIZE / 2;
+                return (
+                  <G key={i} rotation={rotation} origin={`${cx}, ${cy}`}>
+                    <Rect
+                      x={x} y={y} width={DICE_SIZE} height={DICE_SIZE}
+                      rx={CORNER_RADIUS} ry={CORNER_RADIUS}
+                      fill="#faf3e0" stroke="#8b4513" strokeWidth={1.5}
+                    />
+                    {pipPositions[face].map(([px, py], j) => (
+                      <Circle key={j} cx={x + px * DICE_SIZE} cy={y + py * DICE_SIZE} r={pipRadius} fill="#5a2d0c" />
+                    ))}
+                  </G>
+                );
+              })}
+            </Svg>
+          </Animated.View>
+        </View>
+
+        {/* Bottom dot border */}
+        <View style={styles.dotRow}>
+          {DOTS.map((_, i) => <View key={i} style={styles.dot} />)}
+        </View>
+
+      </Pressable>
 
       {!hasRolled && !gameActive && (
         <Animated.View style={[styles.hint, { opacity: hintOpacity }]}>
@@ -172,49 +194,48 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
-  outerFrame: {
-    backgroundColor: '#7a3810',
-    borderRadius: 14,
-    padding: 3,
-    shadowColor: '#2c1008',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
-    elevation: 7,
-  },
-  innerFrame: {
-    backgroundColor: '#faf3e0',
-    borderRadius: 11,
-    overflow: 'hidden',
+  pressable: {
     alignItems: 'center',
+    paddingHorizontal: 8,
   },
-  titleBanner: {
-    backgroundColor: '#2a0d00',
+  dotRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'stretch',
-    paddingVertical: 9,
-    paddingHorizontal: 22,
-    gap: 10,
+    gap: 5,
+    marginVertical: 6,
   },
-  star: {
-    fontSize: 16,
-    color: '#f0c84a',
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#b5651d',
+    opacity: 0.6,
+  },
+  ruleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    gap: 8,
+    marginBottom: 6,
+  },
+  ruleLine: {
+    flex: 1,
+    height: 1.5,
+    backgroundColor: '#b5651d',
+    opacity: 0.5,
+  },
+  ruleStar: {
+    fontSize: 14,
+    color: '#b5651d',
   },
   titleText: {
-    fontSize: 30,
-    color: '#f0c84a',
-    letterSpacing: 5,
-  },
-  bannerEdge: {
-    height: 3,
-    alignSelf: 'stretch',
-    backgroundColor: '#7a3810',
+    fontSize: 36,
+    color: '#4a1500',
+    letterSpacing: 6,
+    marginBottom: 6,
   },
   diceArea: {
-    paddingVertical: 14,
-    paddingHorizontal: 10,
+    paddingVertical: 6,
     alignItems: 'center',
   },
   hint: {
