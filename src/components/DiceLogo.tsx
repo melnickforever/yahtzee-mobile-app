@@ -106,6 +106,10 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
   return (
     <View style={styles.wrapper}>
       <Pressable onPress={handlePress} disabled={gameActive}>
+        <Animated.View style={styles.topTitleHint}>
+          <Text style={styles.topTitleText}>{translations[language].title}</Text>
+        </Animated.View>
+
         <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
           <Svg width={svgWidth} height={svgHeight}>
             {faces.map((face, i) => {
@@ -145,9 +149,16 @@ const styles = StyleSheet.create({
   wrapper: {
     alignSelf: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 30,
   },
   hint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  topTitleHint: {
+    justifyContent: 'center',
+    alignSelf: 'stretch',
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 4,
@@ -158,6 +169,11 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontSize: 12,
+    color: '#8b4513',
+    opacity: 0.7,
+  },
+  topTitleText: {
+    fontSize: 30,
     color: '#8b4513',
     opacity: 0.7,
   },

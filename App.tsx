@@ -119,7 +119,6 @@ export default function App() {
 
             <View style={styles.mainContainer}>
               <DiceLogo language={language} onEnterGame={handleEnterGame} gameActive={gameActive} />
-              <Text style={styles.title}>{t.title}</Text>
 
               <PlayerNameSection
                 language={language}
