@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   clearConfirmLabel: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: '#5c4a2e',
     flex: 1,
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#367a4a',
   },
   confirmYesText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: '#fdf6e3',
   },
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#a0522d',
   },
   confirmNoText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: '#fdf6e3',
   },
