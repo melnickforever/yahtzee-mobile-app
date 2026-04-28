@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '500',
     color: '#3b2f1e',
   },
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   subtotalText: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
     color: '#1e5430',
   },
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   bonusText: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: '#8b4513',
   },

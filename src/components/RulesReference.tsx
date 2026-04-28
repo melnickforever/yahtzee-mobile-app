@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#a0522d',
   },
   toggleBtnText: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
     color: '#fdf6e3',
   },

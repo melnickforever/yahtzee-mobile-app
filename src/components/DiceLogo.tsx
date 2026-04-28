@@ -164,11 +164,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   hintArrow: {
-    fontSize: 12,
+    fontSize: 15,
     color: '#8b4513',
   },
   hintText: {
-    fontSize: 12,
+    fontSize: 15,
     color: '#8b4513',
     opacity: 0.7,
   },
