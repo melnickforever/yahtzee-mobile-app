@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, Pressable, Modal, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Pressable, Modal, TouchableOpacity } from 'react-native';
+import { Text, TextInput } from '../Text';
 
 interface Props {
   value: number | null;

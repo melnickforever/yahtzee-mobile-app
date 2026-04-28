@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, View, Pressable, ScrollView } from 'react-native';
+import { Text } from '../Text';
 import { Language, translations } from '../i18n';
 
 interface Props {

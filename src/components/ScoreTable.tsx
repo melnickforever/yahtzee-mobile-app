@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { StyleSheet, View, Pressable } from 'react-native';
+import { Text } from '../Text';
 import { Language, translations } from '../i18n';
 import { CategoryKey, ScoresData } from '../types';
 import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue } from '../scoring';

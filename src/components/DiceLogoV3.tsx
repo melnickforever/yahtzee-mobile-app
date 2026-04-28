@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Pressable, Animated } from 'react-native';
+import { StyleSheet, View, Pressable, Animated } from 'react-native';
 import Svg, { Rect, Circle, G } from 'react-native-svg';
 import { Language, translations } from '../i18n';
-import { useFonts, Lexend_800ExtraBold, Lexend_400Regular } from '@expo-google-fonts/lexend';
+import { Text, AnimatedText } from '../Text';
 
 interface Props {
   language: Language;
@@ -32,8 +32,6 @@ export function DiceLogoV3({ language, onEnterGame, gameActive }: Props) {
   const [faces, setFaces] = useState([1, 2, 3, 4, 5]);
   const [rolling, setRolling] = useState(false);
   const [hasRolled, setHasRolled] = useState(false);
-
-  const [fontsLoaded] = useFonts({ Lexend_800ExtraBold, Lexend_400Regular });
 
   const bounceAnim = useRef(new Animated.Value(0)).current;
   const hintOpacity = useRef(new Animated.Value(1)).current;
@@ -116,10 +114,7 @@ export function DiceLogoV3({ language, onEnterGame, gameActive }: Props) {
           {/* Title banner */}
           <View style={styles.titleBanner}>
             <Text style={styles.diamond}>◆</Text>
-            <Text style={[
-              styles.titleText,
-              fontsLoaded ? { fontFamily: 'Lexend_800ExtraBold' } : { fontWeight: '900' },
-            ]}>
+            <Text style={styles.titleText}>
               {translations[language].title.toUpperCase()}
             </Text>
             <Text style={styles.diamond}>◆</Text>
@@ -174,13 +169,8 @@ export function DiceLogoV3({ language, onEnterGame, gameActive }: Props) {
 
       {!hasRolled && !gameActive && (
         <Animated.View style={[styles.hint, { opacity: hintOpacity }]}>
-          <Animated.Text style={[styles.hintArrow, { transform: [{ translateY: hintArrow }] }]}>↑</Animated.Text>
-          <Text style={[
-            styles.hintText,
-            fontsLoaded ? { fontFamily: 'Lexend_400Regular' } : {},
-          ]}>
-            {' '}{translations[language].tapToRoll}
-          </Text>
+          <AnimatedText style={[styles.hintArrow, { transform: [{ translateY: hintArrow }] }]}>↑</AnimatedText>
+          <Text style={styles.hintText}>{' '}{translations[language].tapToRoll}</Text>
         </Animated.View>
       )}
     </View>
@@ -237,6 +227,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     fontSize: 28,
+    fontWeight: '800',
     color: '#c8a84b',
     letterSpacing: 5,
   },

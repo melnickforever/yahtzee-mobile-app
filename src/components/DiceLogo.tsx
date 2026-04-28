@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Pressable, Animated } from 'react-native';
+import { StyleSheet, View, Pressable, Animated } from 'react-native';
 import Svg, { Rect, Circle, G } from 'react-native-svg';
 import { Language, translations } from '../i18n';
-import { useFonts, Lexend_800ExtraBold, Lexend_400Regular } from '@expo-google-fonts/lexend';
+import { Text, AnimatedText } from '../Text';
 
 interface Props {
   language: Language;
@@ -32,8 +32,6 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
   const [faces, setFaces] = useState([1, 2, 3, 4, 5]);
   const [rolling, setRolling] = useState(false);
   const [hasRolled, setHasRolled] = useState(false);
-
-  const [fontsLoaded] = useFonts({ Lexend_800ExtraBold, Lexend_400Regular });
 
   const bounceAnim = useRef(new Animated.Value(0)).current;
   const hintOpacity = useRef(new Animated.Value(1)).current;
@@ -110,12 +108,7 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
     <View style={styles.wrapper}>
       <Pressable onPress={handlePress} disabled={gameActive}>
         <Animated.View style={styles.topTitleHint}>
-          <Text style={[
-            styles.topTitleText,
-            fontsLoaded ? { fontFamily: 'Lexend_800ExtraBold' } : { fontWeight: '900' },
-          ]}>
-            {translations[language].title}
-          </Text>
+          <Text style={styles.topTitleText}>{translations[language].title}</Text>
         </Animated.View>
 
         <Animated.View style={{ transform: [{ translateY: bounceAnim }] }}>
@@ -145,13 +138,8 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
 
       {!hasRolled && !gameActive && (
         <Animated.View style={[styles.hint, { opacity: hintOpacity }]}>
-          <Animated.Text style={[styles.hintArrow, { transform: [{ translateY: hintArrow }] }]}>↑</Animated.Text>
-          <Text style={[
-            styles.hintText,
-            fontsLoaded ? { fontFamily: 'Lexend_400Regular' } : {},
-          ]}>
-            {' '}{translations[language].tapToRoll}
-          </Text>
+          <AnimatedText style={[styles.hintArrow, { transform: [{ translateY: hintArrow }] }]}>↑</AnimatedText>
+          <Text style={styles.hintText}> {translations[language].tapToRoll}</Text>
         </Animated.View>
       )}
     </View>
@@ -187,6 +175,7 @@ const styles = StyleSheet.create({
   },
   topTitleText: {
     fontSize: 30,
+    fontWeight: '800',
     color: '#8b4513',
     opacity: 0.7,
   },

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Pressable, BackHandler } from 'react-native';
+import { StyleSheet, View, Pressable, BackHandler } from 'react-native';
+import { Text } from '../Text';
 import Svg, { Rect, Circle } from 'react-native-svg';
 import { Language, translations } from '../i18n';
 

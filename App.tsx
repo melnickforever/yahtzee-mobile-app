@@ -2,13 +2,14 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   StatusBar,
 } from 'react-native';
+import { useFonts, Lexend_400Regular, Lexend_500Medium, Lexend_600SemiBold, Lexend_700Bold, Lexend_800ExtraBold } from '@expo-google-fonts/lexend';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Text } from './src/Text';
 import { Language, translations } from './src/i18n';
 import { CategoryKey, ScoresData } from './src/types';
 import { loadGameState, saveGameState } from './src/storage';
@@ -34,6 +35,7 @@ export default function App() {
   const [scores, setScores] = useState<ScoresData>(defaultScores);
   const [yahtzeeBonus, setYahtzeeBonus] = useState<number>(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [fontsLoaded] = useFonts({ Lexend_400Regular, Lexend_500Medium, Lexend_600SemiBold, Lexend_700Bold, Lexend_800ExtraBold });
 
   const t = translations[language];
   const scrollRef = useRef<ScrollView>(null);
@@ -88,8 +90,7 @@ export default function App() {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   }, []);
 
-  // Loading screen — shown while AsyncStorage hydrates
-  if (!isLoaded) {
+  if (!isLoaded || !fontsLoaded) {
     return (
       <SafeAreaProvider>
         <View style={styles.loadingScreen}>
