@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleBanner: {
-    backgroundColor: '#2a0d00',
+    // backgroundColor: '#2a0d00',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -200,11 +200,12 @@ const styles = StyleSheet.create({
   },
   star: {
     fontSize: 16,
-    color: '#f0c84a',
+    color: '#7a3810',
   },
   titleText: {
     fontSize: 30,
-    color: '#f0c84a',
+    // color: '#f0c84a',
+    color: '#7a3810',
     letterSpacing: 5,
   },
   bannerEdge: {
