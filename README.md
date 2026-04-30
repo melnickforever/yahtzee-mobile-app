@@ -1,55 +1,54 @@
-# Yahtzee
+# Yahtzee Mobile
 
-A free and open-source Yahtzee scorecard and dice roller for Android. No ads, no tracking, no internet permission required.
+A React Native / Expo scorekeeper for playing Yahtzee with real dice — built together with my sons **Pavlo** and **Mykhailo**. Many thanks, guys, for the ideas, testing, and development spirit that shaped this app!
 
-Available in Ukrainian and English.
-
----
-
-## Features
-
-- **Interactive dice game** — 5 SVG dice, tap to keep, up to 3 rolls per turn
-- **Full scorecard** — 13 categories with auto-calculated subtotals, upper bonus, and Yahtzee bonus
-- **Save / Load** — export and import game state as a JSON file via the system share sheet
-- **Auto-save** — game state persists across app restarts (24-hour sliding expiry)
-- **Bilingual** — Ukrainian (`uk`, default) and English (`en`), switchable at any time
-- **Offline** — works entirely on-device; no network access needed
+> **Tip:** Tap the app logo to enter **mini dice game mode** and roll dice right inside the app.
 
 ---
 
 ## Screenshots
 
-<!-- Add screenshots to fastlane/metadata/android/en-US/images/phoneScreenshots/ -->
+<img src="docs/yahtzee1.jpg" width="260" alt="Screenshot 1"> <img src="docs/Yahtzee2.jpg" width="260" alt="Screenshot 2"> <img src="docs/Yathzee3.jpg" width="260" alt="Screenshot 3">
 
 ---
 
-## Tech stack
+## Features
 
-| Concern | Choice |
+- Score table for two players with automatic totals and bonuses
+- Upper section bonus, Yahtzee bonus picker (0–1000 in steps of 100)
+- Save / open game state as a JSON file (share or restore any session)
+- 24-hour auto-save via AsyncStorage — pick up where you left off
+- Built-in dice roller with roll animation and kept/free zones (up to 3 rolls per turn)
+- Ukrainian and English UI (toggle in the top-right corner)
+- Lexend font for improved readability
+
+## Tech Stack
+
+| Layer | Choice |
 |---|---|
-| Framework | [Expo](https://expo.dev) SDK 54 + React Native 0.81 |
-| Language | TypeScript (strict) |
-| Persistence | `@react-native-async-storage/async-storage` |
-| File I/O | `expo-file-system` + `expo-sharing` + `expo-document-picker` |
-| SVG | `react-native-svg` |
-| Animations | `react-native` `Animated` API |
+| Framework | React Native 0.81 + Expo SDK 54 |
+| Language | TypeScript 5.9 |
+| Persistence | AsyncStorage (24 h sliding expiry) |
+| File I/O | expo-sharing, expo-document-picker, expo-file-system/legacy |
+| Graphics | react-native-svg |
+| Font | @expo-google-fonts/lexend |
+| Build | EAS Build |
 
----
-
-## Building from source
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+
-- [Expo CLI](https://docs.expo.dev/more/expo-cli/): `npm install -g expo-cli`
+- Node.js 18+
+- [Expo Go](https://expo.dev/go) on your iOS or Android device
 
-### Development (Expo Go)
+### Run locally
 
 ```bash
 npm install
 npx expo start --clear
-# Scan the QR code with the Expo Go app on your device
 ```
+
+Scan the QR code with Expo Go to open the app on your device.
 
 ### Run on Android emulator
 
@@ -60,87 +59,42 @@ npm run android
 ### Type-check
 
 ```bash
-# Note: use this form — npx tsc is broken due to a symlink issue in this project
 node node_modules/typescript/bin/tsc --noEmit
 ```
 
-### Build a local APK (EAS)
+> `npx tsc` is broken due to a symlink issue — always use the `node node_modules/...` form above.
 
-```bash
-npm install -g eas-cli
-eas build --platform android --profile preview --local
-```
-
-### Build without EAS (native Gradle — for F-Droid)
-
-F-Droid builds must not rely on Expo's hosted EAS service. Use `expo prebuild` to generate the native Android project, then build with Gradle directly:
-
-```bash
-npm install
-npx expo prebuild --platform android --clean
-cd android
-./gradlew assembleRelease
-# Output APK: android/app/build/outputs/apk/release/app-release.apk
-```
-
-For a reproducible release build, pin the `EXPO_SDK_VERSION` and `NODE_VERSION` environment variables and ensure the generated `android/` directory matches what is checked into the repo (if committed).
-
----
-
-## F-Droid metadata
-
-Store listing text lives in `fastlane/metadata/android/`. The structure follows the [fastlane supply](https://docs.fastlane.tools/actions/supply/) convention that F-Droid recognises:
+## Project Structure
 
 ```
-fastlane/metadata/android/
-├── en-US/
-│   ├── title.txt
-│   ├── short_description.txt
-│   ├── full_description.txt
-│   └── images/
-│       └── phoneScreenshots/
-└── uk/
-    ├── title.txt
-    ├── short_description.txt
-    └── full_description.txt
-```
-
-**Anti-features:** none — this app contains no ads, no tracking SDKs, no proprietary network services, and requires no special permissions beyond storage access for file import/export.
-
----
-
-## Project structure
-
-```
-App.tsx               # Root: owns all state, AsyncStorage hydration, ScrollView
-index.ts              # Expo entry point
+App.tsx          # Root state, AsyncStorage hydration, component wiring
+index.ts         # Entry point
 src/
-  i18n.ts             # All UI strings (uk / en)
-  types.ts            # Shared TypeScript types
-  scoring.ts          # Pure score calculation helpers
-  storage.ts          # AsyncStorage wrapper (24 h expiry)
-  fileIO.ts           # JSON save / open (expo-sharing + expo-document-picker)
+  types.ts       # Shared types (CategoryKey, ScoresData, Language …)
+  i18n.ts        # UI strings for 'uk' and 'en'
+  scoring.ts     # Pure scoring functions
+  storage.ts     # AsyncStorage wrapper
+  fileIO.ts      # Save / open JSON game files
   components/
-    DiceLogo.tsx      # Animated dice logo, tap to enter game
-    DiceGame.tsx      # Full dice game: roll, keep, new turn, exit
-    ScoreTable.tsx    # Score grid, totals, clear, save/open buttons
-    ScoreCell.tsx     # Free-numeric input or fixed-value modal picker
+    ScoreTable.tsx
+    ScoreCell.tsx
     YahtzeeBonusCell.tsx
+    DiceGame.tsx
+    DiceLogo.tsx
     RulesReference.tsx
     PlayerNameSection.tsx
     LanguageSwitcher.tsx
 ```
 
----
+## Building for Production
 
-## Privacy
+This project uses [EAS Build](https://docs.expo.dev/build/introduction/).
 
-- No internet permission declared in `AndroidManifest.xml`
-- No analytics, crash reporting, or telemetry of any kind
-- All data stays on-device (AsyncStorage) or in files the user explicitly exports
-
----
+```bash
+npx eas build --platform android
+npx eas build --platform ios
+```
 
 ## License
 
-[GPL](LICENSE)
+GPL
