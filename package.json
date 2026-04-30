@@ -6,7 +6,15 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "testMatch": ["**/__tests__/**/*.test.ts"],
+    "moduleNameMapper": {
+      "^expo-file-system/legacy$": "<rootDir>/src/__mocks__/expo-file-system-legacy.js"
+    }
   },
   "dependencies": {
     "@expo-google-fonts/lexend": "^0.4.1",
@@ -25,8 +33,10 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "babel-preset-expo": "~54.0.10",
+    "jest-expo": "~54.0.0",
     "typescript": "~5.9.2"
   },
   "private": true

@@ -6,6 +6,37 @@ A React Native / Expo scorekeeper for playing Yahtzee with real dice — built t
 
 ---
 
+## How to Play
+
+Yahtzee is a dice game for 2 or more players. Each turn you roll five dice up to three times, trying to score points in 13 categories. The player with the highest grand total wins.
+
+**On your turn:**
+1. Roll all five dice.
+2. Keep any dice you like — tap them to move to the "kept" zone.
+3. Roll the remaining dice again (up to 2 more times).
+4. After your final roll, tap a category in the score table to record your score. Each category can only be used once.
+
+### Scoring categories
+
+| Category | Points |
+|---|---|
+| Ones … Sixes | Sum of that face value |
+| 3 of a Kind | Sum of all dice |
+| 4 of a Kind | Sum of all dice |
+| Full House | 25 |
+| Small Straight (4 in a row) | 30 |
+| Large Straight (5 in a row) | 40 |
+| Yahtzee (all 5 the same) | 50 |
+| Chance | Sum of all dice |
+
+**Upper section bonus:** if your ones–sixes total is 63 or more, you get +35 bonus points.
+
+**Yahtzee bonus:** each extra Yahtzee after the first scores +100, but only if you originally scored 50 in the Yahtzee box (not 0).
+
+If no category fits your roll, you must enter 0 somewhere — choose wisely!
+
+---
+
 ## Screenshots
 
 <img src="docs/yahtzee1.jpg" width="260" alt="Screenshot"> <img src="docs/Yathzee3.jpg" width="260" alt="Screenshot"> <img src="docs/Yahtzee2.jpg" width="260" alt="Screenshot">
@@ -58,6 +89,13 @@ Scan the QR code with Expo Go to open the app on your device.
 npm run android
 ```
 
+### Run tests
+
+```bash
+npm test
+```
+
+Tests cover scoring logic, game-file validation, and i18n key parity between Ukrainian and English.
 
 ## Building for Production
 
