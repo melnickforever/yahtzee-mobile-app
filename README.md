@@ -8,12 +8,9 @@ A React Native / Expo scorekeeper for playing Yahtzee with real dice — built t
 
 ## Screenshots
 
-<img src="docs/yahtzee1.jpg" width="260" alt="Screenshot">
-<img src="docs/Yathzee3.jpg" width="260" alt="Screenshot">
-<img src="docs/Yahtzee2.jpg" width="260" alt="Screenshot">
-<img src="docs/Yahtzee4.jpg" width="260" alt="Screenshot">
-<img src="docs/Yathzee5.jpg" width="260" alt="Screenshot">
-<img src="docs/Yahtzee6.jpg" width="260" alt="Screenshot">
+<img src="docs/yahtzee1.jpg" width="260" alt="Screenshot"> <img src="docs/Yathzee3.jpg" width="260" alt="Screenshot"> <img src="docs/Yahtzee2.jpg" width="260" alt="Screenshot">
+
+<img src="docs/Yahtzee4.jpg" width="260" alt="Screenshot"> <img src="docs/Yathzee5.jpg" width="260" alt="Screenshot"> <img src="docs/Yahtzee6.jpg" width="260" alt="Screenshot">
 
 ---
 
