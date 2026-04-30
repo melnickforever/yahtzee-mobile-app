@@ -8,13 +8,18 @@ A React Native / Expo scorekeeper for playing Yahtzee with real dice — built t
 
 ## Screenshots
 
-<img src="docs/yahtzee1.jpg" width="260" alt="Screenshot 1"> <img src="docs/Yahtzee2.jpg" width="260" alt="Screenshot 2"> <img src="docs/Yathzee3.jpg" width="260" alt="Screenshot 3">
+<img src="docs/yahtzee1.jpg" width="260" alt="Screenshot">
+<img src="docs/Yathzee3.jpg" width="260" alt="Screenshot">
+<img src="docs/Yahtzee2.jpg" width="260" alt="Screenshot">
+<img src="docs/Yahtzee4.jpg" width="260" alt="Screenshot">
+<img src="docs/Yathzee5.jpg" width="260" alt="Screenshot">
+<img src="docs/Yahtzee6.jpg" width="260" alt="Screenshot">
 
 ---
 
 ## Features
 
-- Score table for two players with automatic totals and bonuses
+- Score table  with automatic totals and bonuses
 - Upper section bonus, Yahtzee bonus picker (0–1000 in steps of 100)
 - Save / open game state as a JSON file (share or restore any session)
 - 24-hour auto-save via AsyncStorage — pick up where you left off
@@ -94,6 +99,17 @@ This project uses [EAS Build](https://docs.expo.dev/build/introduction/).
 npx eas build --platform android
 npx eas build --platform ios
 ```
+
+## Languages
+
+The app ships with two UI languages:
+
+| Code | Language | Notes |
+|---|---|---|
+| `uk` | Ukrainian | Default language |
+| `en` | English | |
+
+Switch languages using the toggle in the top-right corner of the app. All UI strings — category names, labels, buttons, and rules — are fully translated. The selected language is persisted between sessions.
 
 ## License
 
