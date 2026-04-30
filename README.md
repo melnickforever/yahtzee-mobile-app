@@ -41,7 +41,7 @@ A React Native / Expo scorekeeper for playing Yahtzee with real dice — built t
 ### Prerequisites
 
 - Node.js 18+
-- [Expo Go](https://expo.dev/go) on your iOS or Android device
+- [Expo Go](https://expo.dev/go) on your Android device
 
 ### Run locally
 
@@ -58,35 +58,6 @@ Scan the QR code with Expo Go to open the app on your device.
 npm run android
 ```
 
-### Type-check
-
-```bash
-node node_modules/typescript/bin/tsc --noEmit
-```
-
-> `npx tsc` is broken due to a symlink issue — always use the `node node_modules/...` form above.
-
-## Project Structure
-
-```
-App.tsx          # Root state, AsyncStorage hydration, component wiring
-index.ts         # Entry point
-src/
-  types.ts       # Shared types (CategoryKey, ScoresData, Language …)
-  i18n.ts        # UI strings for 'uk' and 'en'
-  scoring.ts     # Pure scoring functions
-  storage.ts     # AsyncStorage wrapper
-  fileIO.ts      # Save / open JSON game files
-  components/
-    ScoreTable.tsx
-    ScoreCell.tsx
-    YahtzeeBonusCell.tsx
-    DiceGame.tsx
-    DiceLogo.tsx
-    RulesReference.tsx
-    PlayerNameSection.tsx
-    LanguageSwitcher.tsx
-```
 
 ## Building for Production
 
@@ -94,8 +65,11 @@ This project uses [EAS Build](https://docs.expo.dev/build/introduction/).
 
 ```bash
 npx eas build --platform android
-npx eas build --platform ios
 ```
+
+## Releases
+
+Pre-built Android APKs are available in `RELEASE/Android/` and can be sideloaded directly without the Play Store.
 
 ## Languages
 
