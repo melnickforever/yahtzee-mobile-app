@@ -33,7 +33,10 @@ export function ScoreTable({
     };
   }, []);
 
-  const isYahtzeeBonusLocked = scores.yahtzee === 0;
+  const checkYahtzeeBonusLocked = (bonus: number | null) => 
+    bonus === null || bonus === 0;
+
+  const isYahtzeeBonusLocked = checkYahtzeeBonusLocked(scores.yahtzee);
 
   useEffect(() => {
     if (isYahtzeeBonusLocked) {
