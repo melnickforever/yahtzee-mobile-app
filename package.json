@@ -7,8 +7,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "test": "jest",
-    "buildapk": "npx eas build --platform android --profile preview",
+    "test": "jest && npx expo-doctor",
+    "buildapk": "npm test && npx eas build --platform android --profile preview",
     "checkdep": "npx expo install --check"
   },
   "jest": {
@@ -23,7 +23,6 @@
   "dependencies": {
     "@expo-google-fonts/lexend": "^0.4.1",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "eas-cli": "^18.8.1",
     "expo": "~54.0.34",
     "expo-document-picker": "~14.0.8",
     "expo-file-system": "~19.0.22",
