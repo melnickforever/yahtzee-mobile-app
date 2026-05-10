@@ -32,7 +32,7 @@ export function ScoreCell({ value, onChange, disabled, fixedValue }: Props) {
 
   const handleChangeText = (text: string) => {
     const digits = text.replace(/\D/g, '');
-    setTempValue(digits);
+    setTempValue(digits === '' ? '' : String(parseInt(digits, 10)));
   };
 
   const handleSave = () => {
