@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Pressable, Modal, TouchableOpacity } from 'react-native';
 import { Text, TextInput } from '../Text';
 
@@ -14,22 +14,37 @@ export function ScoreCell({ value, onChange, disabled, fixedValue }: Props) {
   const [tempValue, setTempValue] = useState(value?.toString() ?? '');
   const [modalVisible, setModalVisible] = useState(false);
 
+  useEffect(() => {
+    setIsEditing(false);
+    setModalVisible(false);
+    setTempValue(value !== null ? value.toString() : '');
+  }, [value]);
+
   const handlePress = () => {
     if (disabled) return;
     if (fixedValue !== null && fixedValue !== undefined) {
       setModalVisible(true);
     } else {
       setIsEditing(true);
-      setTempValue(value?.toString() ?? '');
+      setTempValue(value !== null ? value.toString() : '');
     }
   };
 
+  const handleChangeText = (text: string) => {
+    const digits = text.replace(/\D/g, '');
+    setTempValue(digits);
+  };
+
   const handleSave = () => {
-    const parsed = tempValue === '' ? null : parseInt(tempValue, 10);
-    if (parsed !== null && isNaN(parsed)) {
-      setTempValue(value?.toString() ?? '');
+    if (tempValue === '') {
+      onChange(null);
     } else {
-      onChange(parsed);
+      const parsed = parseInt(tempValue, 10);
+      if (isNaN(parsed) || parsed < 0) {
+        setTempValue(value !== null ? value.toString() : '');
+      } else {
+        onChange(parsed);
+      }
     }
     setIsEditing(false);
   };
@@ -44,7 +59,7 @@ export function ScoreCell({ value, onChange, disabled, fixedValue }: Props) {
       <TextInput
         style={styles.input}
         value={tempValue}
-        onChangeText={setTempValue}
+        onChangeText={handleChangeText}
         onBlur={handleSave}
         onSubmitEditing={handleSave}
         keyboardType="number-pad"
