@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#f4efe6"
       },
-      "package": "com.melnickforever.yahtzee",
+      "package": "com.yahtzee.myapp",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
