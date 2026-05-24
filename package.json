@@ -1,5 +1,5 @@
 {
-  "name": "yahtzee-mobile",
+  "name": "yahtzee",
   "version": "1.0.3",
   "main": "index.ts",
   "scripts": {
