@@ -3,7 +3,7 @@ import { StyleSheet, View, Pressable } from 'react-native';
 import { Text } from '../Text';
 import { Language, translations } from '../i18n';
 import { CategoryKey, ScoresData } from '../types';
-import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue } from '../scoring';
+import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue } from '../scoring';
 import { saveGame, openGame, InvalidGameFileError } from '../fileIO';
 import { ScoreCell } from './ScoreCell';
 import { YahtzeeBonusCell } from './YahtzeeBonusCell';
@@ -99,6 +99,7 @@ export function ScoreTable({
           value={scores[categoryKey]}
           onChange={(value) => onScoreChange(categoryKey, value)}
           fixedValue={getFixedValue(categoryKey)}
+          maxValue={getMaxValue(categoryKey)}
         />
       </View>
     </View>

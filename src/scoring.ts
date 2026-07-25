@@ -10,6 +10,18 @@ const FIXED_VALUES: Partial<Record<CategoryKey, number>> = {
   yahtzee: 50,
 };
 
+const MAX_VALUES: Partial<Record<CategoryKey, number>> = {
+  ones: 5,
+  twos: 10,
+  threes: 15,
+  fours: 20,
+  fives: 25,
+  sixes: 30,
+  threeOfAKind: 30,
+  fourOfAKind: 30,
+  chance: 30,
+};
+
 export function upperTotal(scores: ScoresData): number {
   return UPPER_CATEGORIES.reduce((sum, cat) => sum + (scores[cat] ?? 0), 0);
 }
@@ -29,4 +41,8 @@ export function grandTotal(scores: ScoresData, yahtzeeBonus: number): number {
 
 export function getFixedValue(categoryKey: CategoryKey): number | null {
   return FIXED_VALUES[categoryKey] ?? null;
+}
+
+export function getMaxValue(categoryKey: CategoryKey): number | null {
+  return MAX_VALUES[categoryKey] ?? null;
 }
