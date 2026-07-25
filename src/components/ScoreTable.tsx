@@ -79,7 +79,7 @@ export function ScoreTable({
     await refreshSlots();
   };
 
-  const writeCurrentGameToSlot = async (filename: string) => {
+  const writeCurrentGameToSlot = async (filename: string): Promise<boolean> => {
     try {
       await writeSaveSlot(filename, {
         version: 1,
@@ -90,8 +90,10 @@ export function ScoreTable({
         savedAt: new Date().toISOString(),
       });
       setSlotsModalMode(null);
+      return true;
     } catch {
       showFileError(t.invalidFile);
+      return false;
     }
   };
 
@@ -99,7 +101,14 @@ export function ScoreTable({
     generateSlotFilename(playerName, grandTotal(scores, yahtzeeBonus), slots.map((s) => s.filename))
   );
 
-  const handleSaveToSlot = (slot: SaveSlot) => writeCurrentGameToSlot(slot.filename);
+  const handleSaveToSlot = async (slot: SaveSlot) => {
+    const otherFilenames = slots.filter((s) => s.filename !== slot.filename).map((s) => s.filename);
+    const newFilename = generateSlotFilename(playerName, grandTotal(scores, yahtzeeBonus), otherFilenames);
+    const success = await writeCurrentGameToSlot(newFilename);
+    if (success && newFilename !== slot.filename) {
+      await deleteSaveSlot(slot.filename).catch(() => {});
+    }
+  };
 
   const handleOpenSlot = async (slot: SaveSlot) => {
     try {

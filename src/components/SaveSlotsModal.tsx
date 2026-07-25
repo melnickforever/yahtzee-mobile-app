@@ -17,10 +17,10 @@ interface Props {
 
 export function SaveSlotsModal({ visible, mode, language, slots, onClose, onNewSave, onSelectSlot, onDeleteSlot }: Props) {
   const t = translations[language];
-  const [confirmDeleteFilename, setConfirmDeleteFilename] = useState<string | null>(null);
+  const [pendingAction, setPendingAction] = useState<{ filename: string; type: 'delete' | 'overwrite' } | null>(null);
 
   useEffect(() => {
-    if (!visible) setConfirmDeleteFilename(null);
+    if (!visible) setPendingAction(null);
   }, [visible]);
 
   return (
@@ -46,17 +46,23 @@ export function SaveSlotsModal({ visible, mode, language, slots, onClose, onNewS
 
             {slots.map((slot) => (
               <View key={slot.filename} style={styles.slotRow}>
-                {confirmDeleteFilename === slot.filename ? (
+                {pendingAction?.filename === slot.filename ? (
                   <View style={styles.confirmRow}>
-                    <Text style={styles.confirmText} numberOfLines={1}>{t.deleteSaveConfirm}</Text>
+                    <Text style={styles.confirmText} numberOfLines={1}>
+                      {pendingAction.type === 'delete' ? t.deleteSaveConfirm : t.overwriteSaveConfirm}
+                    </Text>
                     <Pressable
-                      onPress={() => { onDeleteSlot(slot); setConfirmDeleteFilename(null); }}
+                      onPress={() => {
+                        if (pendingAction.type === 'delete') onDeleteSlot(slot);
+                        else onSelectSlot(slot);
+                        setPendingAction(null);
+                      }}
                       style={({ pressed }) => [styles.confirmYes, pressed && styles.confirmYesPressed]}
                     >
                       <Text style={styles.confirmYesText}>{t.yes}</Text>
                     </Pressable>
                     <Pressable
-                      onPress={() => setConfirmDeleteFilename(null)}
+                      onPress={() => setPendingAction(null)}
                       style={({ pressed }) => [styles.confirmNo, pressed && styles.confirmNoPressed]}
                     >
                       <Text style={styles.confirmNoText}>{t.no}</Text>
@@ -65,14 +71,16 @@ export function SaveSlotsModal({ visible, mode, language, slots, onClose, onNewS
                 ) : (
                   <>
                     <Pressable
-                      onPress={() => onSelectSlot(slot)}
+                      onPress={() => (mode === 'save'
+                        ? setPendingAction({ filename: slot.filename, type: 'overwrite' })
+                        : onSelectSlot(slot))}
                       style={({ pressed }) => [styles.slotLabelBtn, pressed && styles.slotLabelBtnPressed]}
                     >
                       <Text style={styles.slotLabelText} numberOfLines={1}>{slot.label}</Text>
                       <Text style={styles.slotChevron}>›</Text>
                     </Pressable>
                     <Pressable
-                      onPress={() => setConfirmDeleteFilename(slot.filename)}
+                      onPress={() => setPendingAction({ filename: slot.filename, type: 'delete' })}
                       style={({ pressed }) => [styles.deleteBtn, pressed && styles.deleteBtnPressed]}
                       hitSlop={8}
                     >
