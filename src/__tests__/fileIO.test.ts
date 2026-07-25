@@ -1,6 +1,3 @@
-jest.mock('expo-sharing');
-jest.mock('expo-document-picker');
-
 import { validateGameData } from '../fileIO';
 
 const validScores = {
