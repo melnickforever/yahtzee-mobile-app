@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Pressable, Modal, Switch } from 'react-native';
 import { Text } from '../Text';
 import { Language, translations } from '../i18n';
+import { version } from '../../package.json';
 
 interface Props {
   currentLanguage: Language;
@@ -123,6 +124,8 @@ export function HamburgerMenu({ currentLanguage, onLanguageChange, soundEnabled,
               <View style={styles.panel}>
                 <Text style={styles.panelTitle}>{t.menu.about}</Text>
                 <Text style={styles.aboutText}>{t.menu.aboutText}</Text>
+                <Text style={styles.aboutText}>{t.menu.version} {version}</Text>
+                <Text style={styles.aboutText}>{t.menu.thanks}</Text>
                 <Pressable style={styles.backBtn} onPress={() => setView('menu')}>
                   <Text style={styles.backBtnText}>{t.menu.back}</Text>
                 </Pressable>

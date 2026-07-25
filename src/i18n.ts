@@ -31,6 +31,8 @@ export const translations = {
       soundOff: 'Вимкнено',
       back: 'Назад',
       aboutText: 'Yahtzee — гра, створена Дмитром Мельником',
+      version: 'Версія',
+      thanks: 'Особлива подяка моїм дітям, Михайлу та Павлу, за допомогу з тестуванням і розробкою. Дякую за ваші ідеї та натхнення!',
     },
     game: {
       roll: 'Кинути',
@@ -160,6 +162,8 @@ export const translations = {
       soundOff: 'Off',
       back: 'Back',
       aboutText: 'Yahtzee game by Dmytro Melnyk',
+      version: 'Version',
+      thanks: 'Special thanks to my children, Mykhailo and Pavlo, for their help with testing and development. Thank you for your great ideas and drive!',
     },
     game: {
       roll: 'Roll',
