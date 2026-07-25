@@ -8,9 +8,10 @@ interface Props {
   disabled?: boolean;
   fixedValue?: number | null;
   maxValue?: number | null;
+  stepValue?: number | null;
 }
 
-export function ScoreCell({ value, onChange, disabled, fixedValue, maxValue }: Props) {
+export function ScoreCell({ value, onChange, disabled, fixedValue, maxValue, stepValue }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState(value?.toString() ?? '');
   const [modalVisible, setModalVisible] = useState(false);
@@ -41,7 +42,9 @@ export function ScoreCell({ value, onChange, disabled, fixedValue, maxValue }: P
       onChange(null);
     } else {
       const parsed = parseInt(tempValue, 10);
-      if (isNaN(parsed) || parsed < 0 || (maxValue !== null && maxValue !== undefined && parsed > maxValue)) {
+      const exceedsMax = maxValue !== null && maxValue !== undefined && parsed > maxValue;
+      const failsStep = stepValue !== null && stepValue !== undefined && parsed % stepValue !== 0;
+      if (isNaN(parsed) || parsed < 0 || exceedsMax || failsStep) {
         setTempValue(value !== null ? value.toString() : '');
       } else {
         onChange(parsed);

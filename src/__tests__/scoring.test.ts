@@ -1,4 +1,4 @@
-import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue } from '../scoring';
+import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue, getStepValue } from '../scoring';
 import { ScoresData } from '../types';
 
 const empty: ScoresData = {
@@ -112,5 +112,29 @@ describe('getMaxValue', () => {
     expect(getMaxValue('smallStraight')).toBeNull();
     expect(getMaxValue('largeStraight')).toBeNull();
     expect(getMaxValue('yahtzee')).toBeNull();
+  });
+});
+
+describe('getStepValue', () => {
+  it('returns the face value for upper categories', () => {
+    expect(getStepValue('ones')).toBe(1);
+    expect(getStepValue('twos')).toBe(2);
+    expect(getStepValue('threes')).toBe(3);
+    expect(getStepValue('fours')).toBe(4);
+    expect(getStepValue('fives')).toBe(5);
+    expect(getStepValue('sixes')).toBe(6);
+  });
+
+  it('returns null for free-value lower categories', () => {
+    expect(getStepValue('threeOfAKind')).toBeNull();
+    expect(getStepValue('fourOfAKind')).toBeNull();
+    expect(getStepValue('chance')).toBeNull();
+  });
+
+  it('returns null for fixed-value categories', () => {
+    expect(getStepValue('fullHouse')).toBeNull();
+    expect(getStepValue('smallStraight')).toBeNull();
+    expect(getStepValue('largeStraight')).toBeNull();
+    expect(getStepValue('yahtzee')).toBeNull();
   });
 });

@@ -3,7 +3,7 @@ import { StyleSheet, View, Pressable } from 'react-native';
 import { Text } from '../Text';
 import { Language, translations } from '../i18n';
 import { CategoryKey, ScoresData } from '../types';
-import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue } from '../scoring';
+import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue, getStepValue } from '../scoring';
 import {
   SaveSlot, InvalidGameFileError,
   listSaveSlots, generateSlotFilename, writeSaveSlot, loadSaveSlot, deleteSaveSlot,
@@ -150,6 +150,7 @@ export function ScoreTable({
           onChange={(value) => onScoreChange(categoryKey, value)}
           fixedValue={getFixedValue(categoryKey)}
           maxValue={getMaxValue(categoryKey)}
+          stepValue={getStepValue(categoryKey)}
         />
       </View>
     </View>
