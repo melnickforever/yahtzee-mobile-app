@@ -95,7 +95,9 @@ export function ScoreTable({
     }
   };
 
-  const handleNewSave = () => writeCurrentGameToSlot(generateSlotFilename(playerName));
+  const handleNewSave = () => writeCurrentGameToSlot(
+    generateSlotFilename(playerName, grandTotal(scores, yahtzeeBonus), slots.map((s) => s.filename))
+  );
 
   const handleSaveToSlot = (slot: SaveSlot) => writeCurrentGameToSlot(slot.filename);
 

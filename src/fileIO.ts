@@ -39,10 +39,6 @@ export function validateGameData(data: unknown): data is { scores: ScoresData; y
   return true;
 }
 
-function pad2(n: number): string {
-  return n.toString().padStart(2, '0');
-}
-
 function sanitizeForFilename(name: string): string {
   return name.trim().replace(/[\\/:*?"<>|]+/g, '_');
 }
@@ -54,11 +50,15 @@ async function ensureSavesDir(): Promise<void> {
   }
 }
 
-export function generateSlotFilename(playerName: string, now: Date = new Date()): string {
+export function generateSlotFilename(playerName: string, score: number, existingFilenames: string[] = []): string {
   const namePart = sanitizeForFilename(playerName) || 'Save';
-  const date = `${now.getFullYear()}-${pad2(now.getMonth() + 1)}-${pad2(now.getDate())}`;
-  const time = `${pad2(now.getHours())}-${pad2(now.getMinutes())}-${pad2(now.getSeconds())}`;
-  return `${namePart}-${date}.${time}.json`;
+  const base = `${namePart}-${score}`;
+  const existing = new Set(existingFilenames);
+  let filename = `${base}.json`;
+  for (let suffix = 2; existing.has(filename); suffix += 1) {
+    filename = `${base} (${suffix}).json`;
+  }
+  return filename;
 }
 
 export async function listSaveSlots(): Promise<SaveSlot[]> {

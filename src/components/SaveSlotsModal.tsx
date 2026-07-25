@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Pressable, Modal, ScrollView } from 'react-native';
 import { Text } from '../Text';
 import { Language, translations } from '../i18n';
@@ -17,12 +17,18 @@ interface Props {
 
 export function SaveSlotsModal({ visible, mode, language, slots, onClose, onNewSave, onSelectSlot, onDeleteSlot }: Props) {
   const t = translations[language];
+  const [confirmDeleteFilename, setConfirmDeleteFilename] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!visible) setConfirmDeleteFilename(null);
+  }, [visible]);
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.overlay} onPress={onClose}>
         <Pressable style={styles.box} onPress={() => {}}>
           <Text style={styles.title}>{mode === 'save' ? t.saveGame : t.openGame}</Text>
+          <Text style={styles.hint}>{mode === 'save' ? t.saveSlotHint : t.openSlotHint}</Text>
 
           <ScrollView style={styles.list}>
             {mode === 'save' && onNewSave && (
@@ -40,19 +46,40 @@ export function SaveSlotsModal({ visible, mode, language, slots, onClose, onNewS
 
             {slots.map((slot) => (
               <View key={slot.filename} style={styles.slotRow}>
-                <Pressable
-                  onPress={() => onSelectSlot(slot)}
-                  style={({ pressed }) => [styles.slotLabelBtn, pressed && styles.slotLabelBtnPressed]}
-                >
-                  <Text style={styles.slotLabelText} numberOfLines={1}>{slot.label}</Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => onDeleteSlot(slot)}
-                  style={({ pressed }) => [styles.deleteBtn, pressed && styles.deleteBtnPressed]}
-                  hitSlop={8}
-                >
-                  <Text style={styles.deleteText}>✕</Text>
-                </Pressable>
+                {confirmDeleteFilename === slot.filename ? (
+                  <View style={styles.confirmRow}>
+                    <Text style={styles.confirmText} numberOfLines={1}>{t.deleteSaveConfirm}</Text>
+                    <Pressable
+                      onPress={() => { onDeleteSlot(slot); setConfirmDeleteFilename(null); }}
+                      style={({ pressed }) => [styles.confirmYes, pressed && styles.confirmYesPressed]}
+                    >
+                      <Text style={styles.confirmYesText}>{t.yes}</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setConfirmDeleteFilename(null)}
+                      style={({ pressed }) => [styles.confirmNo, pressed && styles.confirmNoPressed]}
+                    >
+                      <Text style={styles.confirmNoText}>{t.no}</Text>
+                    </Pressable>
+                  </View>
+                ) : (
+                  <>
+                    <Pressable
+                      onPress={() => onSelectSlot(slot)}
+                      style={({ pressed }) => [styles.slotLabelBtn, pressed && styles.slotLabelBtnPressed]}
+                    >
+                      <Text style={styles.slotLabelText} numberOfLines={1}>{slot.label}</Text>
+                      <Text style={styles.slotChevron}>›</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setConfirmDeleteFilename(slot.filename)}
+                      style={({ pressed }) => [styles.deleteBtn, pressed && styles.deleteBtnPressed]}
+                      hitSlop={8}
+                    >
+                      <Text style={styles.deleteText}>✕</Text>
+                    </Pressable>
+                  </>
+                )}
               </View>
             ))}
           </ScrollView>
@@ -91,6 +118,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#2c1810',
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  hint: {
+    fontSize: 12,
+    color: '#8b7355',
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -128,6 +161,9 @@ const styles = StyleSheet.create({
   },
   slotLabelBtn: {
     flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#fffef8',
     borderWidth: 1,
     borderColor: '#e0d5bc',
@@ -139,9 +175,66 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0e8d4',
   },
   slotLabelText: {
+    flex: 1,
     fontSize: 14,
     fontWeight: '500',
     color: '#3b2f1e',
+  },
+  slotChevron: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#8b4513',
+    marginLeft: 8,
+  },
+  confirmRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#fde8e8',
+    borderWidth: 1,
+    borderColor: '#e0b0b0',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  confirmText: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#a02020',
+  },
+  confirmYes: {
+    backgroundColor: '#2d6b3f',
+    borderWidth: 1,
+    borderColor: '#1e5430',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  confirmYesPressed: {
+    backgroundColor: '#367a4a',
+  },
+  confirmYesText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fdf6e3',
+  },
+  confirmNo: {
+    backgroundColor: '#8b4513',
+    borderWidth: 1,
+    borderColor: '#6b3410',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  confirmNoPressed: {
+    backgroundColor: '#a0522d',
+  },
+  confirmNoText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fdf6e3',
   },
   deleteBtn: {
     width: 36,
