@@ -1,4 +1,5 @@
-import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue, getStepValue } from '../scoring';
+import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue, getStepValue, isValidEntry } from '../scoring';
+import { CategoryKey } from '../types';
 import { ScoresData } from '../types';
 
 const empty: ScoresData = {
@@ -136,5 +137,38 @@ describe('getStepValue', () => {
     expect(getStepValue('smallStraight')).toBeNull();
     expect(getStepValue('largeStraight')).toBeNull();
     expect(getStepValue('yahtzee')).toBeNull();
+  });
+});
+
+describe('isValidEntry for upper section', () => {
+  const upperCategories: CategoryKey[] = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+
+  it.each(upperCategories)('accepts every multiple of the face value from 0 up to the max for %s', (category) => {
+    const max = getMaxValue(category)!;
+    const step = getStepValue(category)!;
+    for (let value = 0; value <= max; value += step) {
+      expect(isValidEntry(value, max, step)).toBe(true);
+    }
+  });
+
+  it.each(upperCategories)('rejects values that are not a multiple of the face value for %s', (category) => {
+    const max = getMaxValue(category)!;
+    const step = getStepValue(category)!;
+    for (let value = 1; value <= max; value++) {
+      if (value % step === 0) continue;
+      expect(isValidEntry(value, max, step)).toBe(false);
+    }
+  });
+
+  it.each(upperCategories)('rejects values above the max for %s', (category) => {
+    const max = getMaxValue(category)!;
+    const step = getStepValue(category)!;
+    expect(isValidEntry(max + step, max, step)).toBe(false);
+  });
+
+  it.each(upperCategories)('rejects negative values for %s', (category) => {
+    const max = getMaxValue(category)!;
+    const step = getStepValue(category)!;
+    expect(isValidEntry(-step, max, step)).toBe(false);
   });
 });

@@ -59,3 +59,10 @@ export function getMaxValue(categoryKey: CategoryKey): number | null {
 export function getStepValue(categoryKey: CategoryKey): number | null {
   return STEP_VALUES[categoryKey] ?? null;
 }
+
+export function isValidEntry(value: number, maxValue: number | null, stepValue: number | null): boolean {
+  if (isNaN(value) || value < 0) return false;
+  if (maxValue !== null && value > maxValue) return false;
+  if (stepValue !== null && value % stepValue !== 0) return false;
+  return true;
+}

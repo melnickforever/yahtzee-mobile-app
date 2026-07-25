@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Pressable, Modal, TouchableOpacity } from 'react-native';
 import { Text, TextInput } from '../Text';
+import { isValidEntry } from '../scoring';
 
 interface Props {
   value: number | null;
@@ -42,9 +43,7 @@ export function ScoreCell({ value, onChange, disabled, fixedValue, maxValue, ste
       onChange(null);
     } else {
       const parsed = parseInt(tempValue, 10);
-      const exceedsMax = maxValue !== null && maxValue !== undefined && parsed > maxValue;
-      const failsStep = stepValue !== null && stepValue !== undefined && parsed % stepValue !== 0;
-      if (isNaN(parsed) || parsed < 0 || exceedsMax || failsStep) {
+      if (!isValidEntry(parsed, maxValue ?? null, stepValue ?? null)) {
         setTempValue(value !== null ? value.toString() : '');
       } else {
         onChange(parsed);
