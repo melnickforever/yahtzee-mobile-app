@@ -8,6 +8,7 @@ import { useDiceRollSound } from '../sound';
 interface Props {
   language: Language;
   onExit: () => void;
+  soundEnabled: boolean;
 }
 
 const DICE_SIZE = 46;
@@ -63,7 +64,7 @@ function Die({ face, body, border, pip, onPress }: DieProps) {
   );
 }
 
-export function DiceGame({ language, onExit }: Props) {
+export function DiceGame({ language, onExit, soundEnabled }: Props) {
   const t = translations[language];
 
   const [gameDice, setGameDice] = useState<number[]>(() => Array.from({ length: 5 }, randomFace));
@@ -72,7 +73,7 @@ export function DiceGame({ language, onExit }: Props) {
   const [rolling, setRolling] = useState(false);
 
   const rollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const playClick = useDiceRollSound();
+  const playClick = useDiceRollSound(soundEnabled);
 
   useEffect(() => {
     return () => {

@@ -9,6 +9,7 @@ interface Props {
   language: Language;
   onEnterGame: () => void;
   gameActive: boolean;
+  soundEnabled: boolean;
 }
 
 const DICE_SIZE = 36;
@@ -29,7 +30,7 @@ function randomFace(): number {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
+export function DiceLogo({ language, onEnterGame, gameActive, soundEnabled }: Props) {
   const [faces, setFaces] = useState([1, 2, 3, 4, 5]);
   const [rolling, setRolling] = useState(false);
   const [hasRolled, setHasRolled] = useState(false);
@@ -38,7 +39,7 @@ export function DiceLogo({ language, onEnterGame, gameActive }: Props) {
   const hintOpacity = useRef(new Animated.Value(1)).current;
   const hintArrow = useRef(new Animated.Value(0)).current;
   const pressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const playClick = useDiceLogoSound();
+  const playClick = useDiceLogoSound(soundEnabled);
 
   useEffect(() => {
     return () => {

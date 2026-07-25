@@ -22,6 +22,16 @@ export const translations = {
     no: 'Ні',
     tapToRoll: 'натисни, щоб кинути кістки',
     oneCellPerRound: 'Лише одна клітинка за раунд дозволена',
+    menu: {
+      settings: 'Налаштування',
+      about: 'Про гру',
+      language: 'Мова',
+      sound: 'Звук',
+      soundOn: 'Увімкнено',
+      soundOff: 'Вимкнено',
+      back: 'Назад',
+      aboutText: 'Yahtzee — гра, створена Дмитром Мельником',
+    },
     game: {
       roll: 'Кинути',
       rollCount: 'Кидок',
@@ -141,6 +151,16 @@ export const translations = {
     no: 'No',
     tapToRoll: 'tap to roll dices',
     oneCellPerRound: 'Only one cell per round allowed',
+    menu: {
+      settings: 'Settings',
+      about: 'About',
+      language: 'Language',
+      sound: 'Sound',
+      soundOn: 'On',
+      soundOff: 'Off',
+      back: 'Back',
+      aboutText: 'Yahtzee game by Dmytro Melnyk',
+    },
     game: {
       roll: 'Roll',
       rollCount: 'Roll',

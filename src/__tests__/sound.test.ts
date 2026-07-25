@@ -72,3 +72,31 @@ describe('useDiceLogoSound and useDiceRollSound', () => {
     expect(mockUseAudioPlayer).toHaveBeenCalledTimes(2);
   });
 });
+
+describe('disabled sound', () => {
+  it('does not play when useDiceLogoSound is disabled', async () => {
+    const mockPlayer = makeMockPlayer();
+    mockUseAudioPlayer.mockReturnValue(mockPlayer);
+
+    const play = renderHook(() => useDiceLogoSound(false)).current;
+    await act(async () => {
+      await play();
+    });
+
+    expect(mockPlayer.seekTo).not.toHaveBeenCalled();
+    expect(mockPlayer.play).not.toHaveBeenCalled();
+  });
+
+  it('does not play when useDiceRollSound is disabled', async () => {
+    const mockPlayer = makeMockPlayer();
+    mockUseAudioPlayer.mockReturnValue(mockPlayer);
+
+    const play = renderHook(() => useDiceRollSound(false)).current;
+    await act(async () => {
+      await play();
+    });
+
+    expect(mockPlayer.seekTo).not.toHaveBeenCalled();
+    expect(mockPlayer.play).not.toHaveBeenCalled();
+  });
+});

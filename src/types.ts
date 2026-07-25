@@ -33,5 +33,6 @@ export interface PersistedState {
   yahtzeeBonus: number;
   playerName: string;
   language: Language;
+  soundEnabled: boolean;
   expiresAt: number;
 }

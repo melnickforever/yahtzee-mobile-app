@@ -13,7 +13,8 @@ import { Text } from './src/Text';
 import { Language, translations } from './src/i18n';
 import { CategoryKey, ScoresData } from './src/types';
 import { loadGameState, saveGameState } from './src/storage';
-import { LanguageSwitcher } from './src/components/LanguageSwitcher';
+import { resolveLanguage } from './src/locale';
+import { HamburgerMenu } from './src/components/HamburgerMenu';
 import { DiceLogo } from './src/components/DiceLogo';
 import { DiceGame } from './src/components/DiceGame';
 import { RulesReference } from './src/components/RulesReference';
@@ -28,12 +29,13 @@ const defaultScores: ScoresData = {
 
 
 export default function App() {
-  const [language, setLanguage] = useState<Language>('uk');
+  const [language, setLanguage] = useState<Language>(() => resolveLanguage());
   const [playerName, setPlayerName] = useState('');
   const [isPlayerNameSaved, setIsPlayerNameSaved] = useState(false);
   const [gameActive, setGameActive] = useState(false);
   const [scores, setScores] = useState<ScoresData>(defaultScores);
   const [yahtzeeBonus, setYahtzeeBonus] = useState<number>(0);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [fontsLoaded] = useFonts({ Lexend_400Regular, Lexend_500Medium, Lexend_600SemiBold, Lexend_700Bold, Lexend_800ExtraBold });
 
@@ -47,7 +49,8 @@ export default function App() {
         setScores(data.scores ?? defaultScores);
         setYahtzeeBonus(data.yahtzeeBonus ?? 0);
         setPlayerName(data.playerName ?? '');
-        setLanguage(data.language ?? 'uk');
+        setLanguage(resolveLanguage(data.language));
+        setSoundEnabled(data.soundEnabled ?? true);
         if (data.playerName) setIsPlayerNameSaved(true);
       }
       setIsLoaded(true);
@@ -56,8 +59,8 @@ export default function App() {
 
   useEffect(() => {
     if (!isLoaded) return;
-    saveGameState({ scores, yahtzeeBonus, playerName, language });
-  }, [isLoaded, scores, yahtzeeBonus, playerName, language]);
+    saveGameState({ scores, yahtzeeBonus, playerName, language, soundEnabled });
+  }, [isLoaded, scores, yahtzeeBonus, playerName, language, soundEnabled]);
 
   const handleScoreChange = useCallback((category: CategoryKey, value: number | null) => {
     setScores((prev) => ({ ...prev, [category]: value }));
@@ -95,7 +98,7 @@ export default function App() {
       <SafeAreaProvider>
         <View style={styles.loadingScreen}>
           <StatusBar barStyle="dark-content" backgroundColor="#f4efe6" />
-          <DiceLogo language="uk" onEnterGame={() => {}} gameActive={true} />
+          <DiceLogo language="uk" onEnterGame={() => {}} gameActive={true} soundEnabled={false} />
           <Text style={styles.loadingTitle}>Yahtzee</Text>
         </View>
       </SafeAreaProvider>
@@ -110,7 +113,12 @@ export default function App() {
           style={styles.flex}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
+          <HamburgerMenu
+            currentLanguage={language}
+            onLanguageChange={setLanguage}
+            soundEnabled={soundEnabled}
+            onSoundEnabledChange={setSoundEnabled}
+          />
           <ScrollView
             ref={scrollRef}
             style={styles.flex}
@@ -119,7 +127,7 @@ export default function App() {
           >
 
             <View style={styles.mainContainer}>
-              <DiceLogo language={language} onEnterGame={handleEnterGame} gameActive={gameActive} />
+              <DiceLogo language={language} onEnterGame={handleEnterGame} gameActive={gameActive} soundEnabled={soundEnabled} />
 
               <PlayerNameSection
                 language={language}
@@ -132,7 +140,7 @@ export default function App() {
 
               {gameActive && (
                 <View onLayout={(e) => { diceGameY.current = e.nativeEvent.layout.y; }}>
-                  <DiceGame language={language} onExit={handleExitGame} />
+                  <DiceGame language={language} onExit={handleExitGame} soundEnabled={soundEnabled} />
                 </View>
               )}
 
