@@ -12,3 +12,4 @@ npm-debug.*
 *.orig.*
 web-build/
 .DS_Store
+docs/pr/

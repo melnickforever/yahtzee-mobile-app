@@ -3,10 +3,12 @@ import { StyleSheet, View, Pressable, BackHandler } from 'react-native';
 import { Text } from '../Text';
 import Svg, { Rect, Circle } from 'react-native-svg';
 import { Language, translations } from '../i18n';
+import { useDiceRollSound } from '../sound';
 
 interface Props {
   language: Language;
   onExit: () => void;
+  soundEnabled: boolean;
 }
 
 const DICE_SIZE = 46;
@@ -62,7 +64,7 @@ function Die({ face, body, border, pip, onPress }: DieProps) {
   );
 }
 
-export function DiceGame({ language, onExit }: Props) {
+export function DiceGame({ language, onExit, soundEnabled }: Props) {
   const t = translations[language];
 
   const [gameDice, setGameDice] = useState<number[]>(() => Array.from({ length: 5 }, randomFace));
@@ -71,6 +73,7 @@ export function DiceGame({ language, onExit }: Props) {
   const [rolling, setRolling] = useState(false);
 
   const rollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const playClick = useDiceRollSound(soundEnabled);
 
   useEffect(() => {
     return () => {
@@ -99,6 +102,7 @@ export function DiceGame({ language, onExit }: Props) {
   const handleRoll = useCallback(() => {
     if (rollCount >= MAX_ROLLS || rolling) return;
     if (kept.every(Boolean)) return;
+    playClick();
     setRolling(true);
     setRollCount((c) => c + 1);
     let count = 0;
@@ -112,7 +116,7 @@ export function DiceGame({ language, onExit }: Props) {
         setRolling(false);
       }
     }, 80);
-  }, [rollCount, rolling, kept]);
+  }, [rollCount, rolling, kept, playClick]);
 
   const toggleKeep = useCallback((index: number) => {
     if (rolling) return;
@@ -121,6 +125,7 @@ export function DiceGame({ language, onExit }: Props) {
 
   const handleNewTurn = useCallback(() => {
     if (rollIntervalRef.current !== null) clearInterval(rollIntervalRef.current);
+    playClick();
     setKept([false, false, false, false, false]);
     setRollCount(1);
     setRolling(true);
@@ -134,7 +139,7 @@ export function DiceGame({ language, onExit }: Props) {
         setRolling(false);
       }
     }, 80);
-  }, []);
+  }, [playClick]);
 
   const freeDice = gameDice.map((v, i) => ({ value: v, index: i })).filter((_, i) => !kept[i]);
   const keptDice = gameDice.map((v, i) => ({ value: v, index: i })).filter((_, i) => kept[i]);

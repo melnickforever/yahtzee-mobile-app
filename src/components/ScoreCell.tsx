@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Pressable, Modal, TouchableOpacity } from 'react-native';
 import { Text, TextInput } from '../Text';
+import { isValidEntry } from '../scoring';
 
 interface Props {
   value: number | null;
   onChange: (value: number | null) => void;
   disabled?: boolean;
   fixedValue?: number | null;
+  maxValue?: number | null;
+  stepValue?: number | null;
 }
 
-export function ScoreCell({ value, onChange, disabled, fixedValue }: Props) {
+export function ScoreCell({ value, onChange, disabled, fixedValue, maxValue, stepValue }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState(value?.toString() ?? '');
   const [modalVisible, setModalVisible] = useState(false);
@@ -40,7 +43,7 @@ export function ScoreCell({ value, onChange, disabled, fixedValue }: Props) {
       onChange(null);
     } else {
       const parsed = parseInt(tempValue, 10);
-      if (isNaN(parsed) || parsed < 0) {
+      if (!isValidEntry(parsed, maxValue ?? null, stepValue ?? null)) {
         setTempValue(value !== null ? value.toString() : '');
       } else {
         onChange(parsed);

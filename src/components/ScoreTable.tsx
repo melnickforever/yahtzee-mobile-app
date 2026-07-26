@@ -3,10 +3,14 @@ import { StyleSheet, View, Pressable } from 'react-native';
 import { Text } from '../Text';
 import { Language, translations } from '../i18n';
 import { CategoryKey, ScoresData } from '../types';
-import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue } from '../scoring';
-import { saveGame, openGame, InvalidGameFileError } from '../fileIO';
+import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue, getStepValue } from '../scoring';
+import {
+  SaveSlot, InvalidGameFileError,
+  listSaveSlots, generateSlotFilename, writeSaveSlot, loadSaveSlot, deleteSaveSlot,
+} from '../fileIO';
 import { ScoreCell } from './ScoreCell';
 import { YahtzeeBonusCell } from './YahtzeeBonusCell';
+import { SaveSlotsModal } from './SaveSlotsModal';
 
 interface Props {
   language: Language;
@@ -26,6 +30,8 @@ export function ScoreTable({
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [fileError, setFileError] = useState<string | null>(null);
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [slotsModalMode, setSlotsModalMode] = useState<'save' | 'open' | null>(null);
+  const [slots, setSlots] = useState<SaveSlot[]>([]);
 
   useEffect(() => {
     return () => {
@@ -55,9 +61,27 @@ export function ScoreTable({
     errorTimerRef.current = setTimeout(() => setFileError(null), 5000);
   };
 
-  const handleSaveGame = async () => {
+  const refreshSlots = async () => {
     try {
-      await saveGame({
+      setSlots(await listSaveSlots());
+    } catch {
+      showFileError(t.invalidFile);
+    }
+  };
+
+  const openSaveModal = async () => {
+    setSlotsModalMode('save');
+    await refreshSlots();
+  };
+
+  const openOpenModal = async () => {
+    setSlotsModalMode('open');
+    await refreshSlots();
+  };
+
+  const writeCurrentGameToSlot = async (filename: string): Promise<boolean> => {
+    try {
+      await writeSaveSlot(filename, {
         version: 1,
         name: playerName,
         language,
@@ -65,19 +89,45 @@ export function ScoreTable({
         yahtzeeBonus,
         savedAt: new Date().toISOString(),
       });
+      setSlotsModalMode(null);
+      return true;
     } catch {
       showFileError(t.invalidFile);
+      return false;
     }
   };
 
-  const handleOpenGame = async () => {
+  const handleNewSave = () => writeCurrentGameToSlot(
+    generateSlotFilename(playerName, grandTotal(scores, yahtzeeBonus), slots.map((s) => s.filename))
+  );
+
+  const handleSaveToSlot = async (slot: SaveSlot) => {
+    const otherFilenames = slots.filter((s) => s.filename !== slot.filename).map((s) => s.filename);
+    const newFilename = generateSlotFilename(playerName, grandTotal(scores, yahtzeeBonus), otherFilenames);
+    const success = await writeCurrentGameToSlot(newFilename);
+    if (success && newFilename !== slot.filename) {
+      await deleteSaveSlot(slot.filename).catch(() => {});
+    }
+  };
+
+  const handleOpenSlot = async (slot: SaveSlot) => {
     try {
-      const data = await openGame();
-      if (data) onLoadGame(data);
+      const data = await loadSaveSlot(slot.filename);
+      onLoadGame(data);
+      setSlotsModalMode(null);
     } catch (e) {
       if (e instanceof InvalidGameFileError) {
         showFileError(t.invalidFile);
       }
+    }
+  };
+
+  const handleDeleteSlot = async (slot: SaveSlot) => {
+    try {
+      await deleteSaveSlot(slot.filename);
+      setSlots((prev) => prev.filter((s) => s.filename !== slot.filename));
+    } catch {
+      showFileError(t.invalidFile);
     }
   };
 
@@ -99,6 +149,8 @@ export function ScoreTable({
           value={scores[categoryKey]}
           onChange={(value) => onScoreChange(categoryKey, value)}
           fixedValue={getFixedValue(categoryKey)}
+          maxValue={getMaxValue(categoryKey)}
+          stepValue={getStepValue(categoryKey)}
         />
       </View>
     </View>
@@ -180,13 +232,13 @@ export function ScoreTable({
 
       <View style={styles.gameActions}>
         <Pressable
-          onPress={handleOpenGame}
+          onPress={openOpenModal}
           style={({ pressed }) => [styles.openBtn, pressed && styles.openBtnPressed]}
         >
           <Text style={styles.actionBtnText}>{t.openGame}</Text>
         </Pressable>
         <Pressable
-          onPress={handleSaveGame}
+          onPress={openSaveModal}
           style={({ pressed }) => [styles.saveBtn, pressed && styles.saveBtnPressed]}
         >
           <Text style={styles.actionBtnText}>{t.saveGame}</Text>
@@ -198,6 +250,17 @@ export function ScoreTable({
           <Text style={styles.fileErrorText}>{fileError}</Text>
         </View>
       )}
+
+      <SaveSlotsModal
+        visible={slotsModalMode !== null}
+        mode={slotsModalMode ?? 'save'}
+        language={language}
+        slots={slots}
+        onClose={() => setSlotsModalMode(null)}
+        onNewSave={slotsModalMode === 'save' ? handleNewSave : undefined}
+        onSelectSlot={slotsModalMode === 'save' ? handleSaveToSlot : handleOpenSlot}
+        onDeleteSlot={handleDeleteSlot}
+      />
     </View>
   );
 }

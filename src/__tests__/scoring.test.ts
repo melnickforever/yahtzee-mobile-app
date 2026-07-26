@@ -1,4 +1,5 @@
-import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue } from '../scoring';
+import { upperTotal, lowerTotal, upperBonus, grandTotal, getFixedValue, getMaxValue, getStepValue, isValidEntry } from '../scoring';
+import { CategoryKey } from '../types';
 import { ScoresData } from '../types';
 
 const empty: ScoresData = {
@@ -88,5 +89,86 @@ describe('getFixedValue', () => {
     expect(getFixedValue('ones')).toBeNull();
     expect(getFixedValue('threeOfAKind')).toBeNull();
     expect(getFixedValue('chance')).toBeNull();
+  });
+});
+
+describe('getMaxValue', () => {
+  it('returns 5x face value for upper categories', () => {
+    expect(getMaxValue('ones')).toBe(5);
+    expect(getMaxValue('twos')).toBe(10);
+    expect(getMaxValue('threes')).toBe(15);
+    expect(getMaxValue('fours')).toBe(20);
+    expect(getMaxValue('fives')).toBe(25);
+    expect(getMaxValue('sixes')).toBe(30);
+  });
+
+  it('returns 30 for free-value lower categories (5 dice x max face 6)', () => {
+    expect(getMaxValue('threeOfAKind')).toBe(30);
+    expect(getMaxValue('fourOfAKind')).toBe(30);
+    expect(getMaxValue('chance')).toBe(30);
+  });
+
+  it('returns null for fixed-value categories', () => {
+    expect(getMaxValue('fullHouse')).toBeNull();
+    expect(getMaxValue('smallStraight')).toBeNull();
+    expect(getMaxValue('largeStraight')).toBeNull();
+    expect(getMaxValue('yahtzee')).toBeNull();
+  });
+});
+
+describe('getStepValue', () => {
+  it('returns the face value for upper categories', () => {
+    expect(getStepValue('ones')).toBe(1);
+    expect(getStepValue('twos')).toBe(2);
+    expect(getStepValue('threes')).toBe(3);
+    expect(getStepValue('fours')).toBe(4);
+    expect(getStepValue('fives')).toBe(5);
+    expect(getStepValue('sixes')).toBe(6);
+  });
+
+  it('returns null for free-value lower categories', () => {
+    expect(getStepValue('threeOfAKind')).toBeNull();
+    expect(getStepValue('fourOfAKind')).toBeNull();
+    expect(getStepValue('chance')).toBeNull();
+  });
+
+  it('returns null for fixed-value categories', () => {
+    expect(getStepValue('fullHouse')).toBeNull();
+    expect(getStepValue('smallStraight')).toBeNull();
+    expect(getStepValue('largeStraight')).toBeNull();
+    expect(getStepValue('yahtzee')).toBeNull();
+  });
+});
+
+describe('isValidEntry for upper section', () => {
+  const upperCategories: CategoryKey[] = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+
+  it.each(upperCategories)('accepts every multiple of the face value from 0 up to the max for %s', (category) => {
+    const max = getMaxValue(category)!;
+    const step = getStepValue(category)!;
+    for (let value = 0; value <= max; value += step) {
+      expect(isValidEntry(value, max, step)).toBe(true);
+    }
+  });
+
+  it.each(upperCategories)('rejects values that are not a multiple of the face value for %s', (category) => {
+    const max = getMaxValue(category)!;
+    const step = getStepValue(category)!;
+    for (let value = 1; value <= max; value++) {
+      if (value % step === 0) continue;
+      expect(isValidEntry(value, max, step)).toBe(false);
+    }
+  });
+
+  it.each(upperCategories)('rejects values above the max for %s', (category) => {
+    const max = getMaxValue(category)!;
+    const step = getStepValue(category)!;
+    expect(isValidEntry(max + step, max, step)).toBe(false);
+  });
+
+  it.each(upperCategories)('rejects negative values for %s', (category) => {
+    const max = getMaxValue(category)!;
+    const step = getStepValue(category)!;
+    expect(isValidEntry(-step, max, step)).toBe(false);
   });
 });

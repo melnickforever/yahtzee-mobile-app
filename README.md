@@ -49,10 +49,11 @@ If no category fits your roll, you must enter 0 somewhere — choose wisely!
 
 - Score table  with automatic totals and bonuses
 - Upper section bonus, Yahtzee bonus picker (0–1000 in steps of 100)
-- Save / open game state as a JSON file (share or restore any session)
+- Save / open game state across multiple named save slots stored on-device
 - 24-hour auto-save via AsyncStorage — pick up where you left off
 - Built-in dice roller with roll animation and kept/free zones (up to 3 rolls per turn)
-- Ukrainian and English UI (toggle in the top-right corner)
+- Dice roll sound effects, toggleable from the settings menu
+- Ukrainian and English UI, auto-detected from the device's system language on first launch and switchable anytime from the settings menu
 - Lexend font for improved readability
 
 ## Tech Stack
@@ -62,7 +63,9 @@ If no category fits your roll, you must enter 0 somewhere — choose wisely!
 | Framework | React Native 0.81 + Expo SDK 54 |
 | Language | TypeScript 5.9 |
 | Persistence | AsyncStorage (24 h sliding expiry) |
-| File I/O | expo-sharing, expo-document-picker, expo-file-system/legacy |
+| File I/O | expo-file-system/legacy (on-device save slots) |
+| Audio | expo-audio |
+| Localization | expo-localization (system language detection) |
 | Graphics | react-native-svg |
 | Font | @expo-google-fonts/lexend |
 | Build | EAS Build |
@@ -118,7 +121,7 @@ The app ships with two UI languages:
 | `uk` | Ukrainian | Default language |
 | `en` | English | |
 
-Switch languages using the toggle in the top-right corner of the app. All UI strings — category names, labels, buttons, and rules — are fully translated. The selected language is persisted between sessions.
+On first launch the app matches your device's system language, falling back to Ukrainian if it isn't supported. Switch languages anytime from the settings menu. All UI strings — category names, labels, buttons, and rules — are fully translated. The selected language is persisted between sessions.
 
 ## License
 

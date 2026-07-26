@@ -10,6 +10,27 @@ const FIXED_VALUES: Partial<Record<CategoryKey, number>> = {
   yahtzee: 50,
 };
 
+const MAX_VALUES: Partial<Record<CategoryKey, number>> = {
+  ones: 5,
+  twos: 10,
+  threes: 15,
+  fours: 20,
+  fives: 25,
+  sixes: 30,
+  threeOfAKind: 30,
+  fourOfAKind: 30,
+  chance: 30,
+};
+
+const STEP_VALUES: Partial<Record<CategoryKey, number>> = {
+  ones: 1,
+  twos: 2,
+  threes: 3,
+  fours: 4,
+  fives: 5,
+  sixes: 6,
+};
+
 export function upperTotal(scores: ScoresData): number {
   return UPPER_CATEGORIES.reduce((sum, cat) => sum + (scores[cat] ?? 0), 0);
 }
@@ -29,4 +50,19 @@ export function grandTotal(scores: ScoresData, yahtzeeBonus: number): number {
 
 export function getFixedValue(categoryKey: CategoryKey): number | null {
   return FIXED_VALUES[categoryKey] ?? null;
+}
+
+export function getMaxValue(categoryKey: CategoryKey): number | null {
+  return MAX_VALUES[categoryKey] ?? null;
+}
+
+export function getStepValue(categoryKey: CategoryKey): number | null {
+  return STEP_VALUES[categoryKey] ?? null;
+}
+
+export function isValidEntry(value: number, maxValue: number | null, stepValue: number | null): boolean {
+  if (isNaN(value) || value < 0) return false;
+  if (maxValue !== null && value > maxValue) return false;
+  if (stepValue !== null && value % stepValue !== 0) return false;
+  return true;
 }
